@@ -1,7 +1,13 @@
 import logo from './logo.svg';
 import './App.css';
+import { get } from 'http';
 
 function App() {
+const observer = new IntersectionObserver((entries,observer)=>{}) 
+
+  // innerHeight
+  // getComputedStyle
+  
   return (
     <div className="App">
       <header className="App-header">
