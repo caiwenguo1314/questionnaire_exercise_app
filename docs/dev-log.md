@@ -63,7 +63,38 @@ module.exports = {
   ```bash
   npm install react-router-dom
   ```
- 
+ ```bash
+mkdir src\components
+mkdir src\pages
+mkdir src\hooks
+mkdir src\context
+mkdir src\utils
+mkdir src\types
+mkdir src\styles
+mkdir src\assets
+```
+
+目录结构说明：
+
+- components : 存放可复用的组件
+- pages : 存放页面级组件
+- hooks : 存放自定义 hooks
+- context : 存放 Context 相关文件
+- utils : 存放工具函数
+- types : 存放 TypeScript 类型定义
+- styles : 存放样式文件
+- assets : 存放静态资源（图片等）
+在 components 目录下，我们还可以进一步细分：
+
+```bash
+mkdir src\components\layout
+mkdir src\components\ui
+mkdir src\components\form
+```
+
+- layout : 布局相关组件
+- ui : 通用 UI 组件
+- form : 表单相关组件
   - 创建基础页面组件文件：
   - PolicySelect.tsx: 保单选择页面
   - QuestionnaireForm.tsx: 问卷表单页面
@@ -74,9 +105,8 @@ module.exports = {
   - 在 App.tsx 中设置路由结构
   - 实现基本的页面导航功能
 ### 待办事项
-- 配置 Tailwind CSS
-- 搭建项目目录结构
-- 实现路由系统
+
+
 - 开发保单选择页面
 - 实现页面组件的具体功能
 - 添加状态管理
