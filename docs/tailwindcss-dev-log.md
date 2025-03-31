@@ -120,6 +120,13 @@ npx tailwindcss -i ./src/input.css -o ./dist/output.css --minify
 - **背景颜色**：
   - `bg-red-200`：红色 200
   - `bg-transparent`：透明背景
+- **鼠标变小手**：
+    - `cursor-pointer`：鼠标变小手
+    ```html
+    <button class="bg-blue-500 text-white cursor-pointer">
+      Hover Me
+    </button>
+    ```
 - **渐变**：
   - `bg-gradient-to-r from-blue-500 to-purple-500`：从左到右渐变
   ```html

@@ -12,7 +12,7 @@ export default function PageLayout() {
     { id: 3, label: "Payout details" },
     { id: 4, label: "review" },
   ];
-  const current = 4;
+  const current = 1;
   return (
     <div>
       <header className="mt-4">
