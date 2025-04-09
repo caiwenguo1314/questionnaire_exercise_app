@@ -1,21 +1,21 @@
 import React, { useState, useEffect } from "react";
-import {AssuredPerson} from '../../types/form'
+import { AssuredPerson } from "../../types/form";
 /* 定义CardData接口 */
-interface AssuredCardData {
-  name: string;
-  /* 已数组形式接收insurance对象，方便map */
-  insurance: {
-    insurancePiece: string;
-    insuranceNumber: string;
-  }[];
-}
+// interface AssuredCardData {
+//   name: string;
+//   /* 已数组形式接收insurance对象，方便map */
+//   insurance: {
+//     insurancePiece: string;
+//     insuranceNumber: string;
+//   }[];
+// }
 /* 组件本身 */
 export default function AssuredCard({
   /* 接受一个props,并解构复制 */
   AssuredCardData,
 }: {
   /* 定义接受一个包含data结构形式对象的数组 */
-  AssuredCardData: AssuredCardData[];
+  AssuredCardData: AssuredPerson[];
 }) {
   /* 创建一个useState来管理点击的状态，为了实现每个card的单独控制， */
   const [selected, setSelected] = useState<boolean[]>(

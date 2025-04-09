@@ -1,22 +1,14 @@
 import { SettingOutlined } from "@ant-design/icons";
 import FootButton from "components/ui/footButton";
 import StepProgress from "components/ui/stepProgress";
-import React, { useEffect } from "react";
-import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { Outlet } from "react-router-dom";
+import useQuestionnaireContext from "hooks/useQuestionnaireContext";
 
 export default function PageLayout() {
-  // const stepRound =
-  //   "flex border rounded-full w-12 h-12 justify-center items-center";
-  const steps = [
-    { id: 1, label: "Life assured" },
-    { id: 2, label: "Claim details" },
-    { id: 3, label: "Payout details" },
-    { id: 4, label: "review" },
-  ];
-  const current = 1;
-  const onClick = () => {
-    console.log("onClick");
-  };
+  /* 使用自定义钩子 */
+  const { Steps, stepCurrent, footButtonOnClick } = useQuestionnaireContext();
+
+
   return (
     <div className="min-h-screen flex flex-col overflow-hidden">
       <header className="mt-4">
@@ -46,7 +38,7 @@ export default function PageLayout() {
       {/* 主要内容区,语义标签且唯一 */}
       <main className="flex-1 bg-gray-100 overflow-auto">
         {/* 步骤条 */}
-        <StepProgress steps={steps} current={current} />
+        <StepProgress steps={Steps} />
         <div className="max-w-4xl mx-auto px-4 py-6">
           <Outlet />
         </div>
@@ -60,8 +52,12 @@ export default function PageLayout() {
           </span>
         </div>
         <div className="flex w-full bg-write justify-end h-20 items-center ">
-          <FootButton label="Back" current={current} onClick={onClick} />
-          <FootButton label="Continue" current={current} onClick={onClick} />
+          <FootButton label="Back" current={stepCurrent} onClick={footButtonOnClick} />
+          <FootButton
+            label="Continue"
+            current={stepCurrent}
+            onClick={footButtonOnClick}
+          />
         </div>
       </footer>
     </div>

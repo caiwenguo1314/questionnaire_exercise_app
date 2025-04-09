@@ -1,22 +1,24 @@
-import { useEffect, useState } from "react";
+import useQuestionnaireContext from "hooks/useQuestionnaireContext";
 //默认导出步骤条组件
 export default function StepProgress(
   /* 形参 */ {
-    steps,
-    current,
+    steps,    
   }: /* 对形参定义 */ {
     /* steps是一个数组，数组中的每个元素都是一个对象，包含两个属性，id是数字，label是字符串 */
     steps: { id: number; label: string }[];
     /* current是一个数字，表示当前步骤 */
-    current: number;
+  
   }
 ) {
+  
+
+  const {setStepCurrent,stepCurrent} = useQuestionnaireContext();
   /* 定义一个状态变量，用来存储当前步骤的id */
-  const [currentStep, setCurrentStep] = useState(1);
+  // const [currentStep, setCurrentStep] = useState(1);
   /** 解决从外界传入current及时渲染 */
-  useEffect(() => {
-    setCurrentStep(current);
-  }, [current]);
+  // useEffect(() => {
+  //   setStepCurrent(stepCurrent);
+  // }, [stepCurrent,setStepCurrent]);
 
   return (
     /* 最外层包裹元素，设置居中，间距等 */
@@ -35,14 +37,14 @@ export default function StepProgress(
               className={`w-8 h-8 flex items-center justify-center rounded-full text-white font-bold cursor-pointer transition-all duration-300 
               ${
                 /* 三元运算符 */
-                currentStep === step.id
+                stepCurrent === step.id
                   ? "bg-red-600"
-                  : currentStep > step.id
+                  : stepCurrent > step.id
                   ? "bg-gray-500"
                   : "bg-gray-300"
               }
             `} /* 注册点击事件 */
-              onClick={() => setCurrentStep(step.id)}
+              onClick={() => setStepCurrent(step.id)}
             >
               {/* 插入变量 */}
               {step.id}
@@ -50,7 +52,7 @@ export default function StepProgress(
             {/* label */}
             <div /* 绝对定位，参照父元素定位，通过left-1/2 -translate-x-1/2 来居中 禁止换行 通过当前值判断颜色*/
               className={`text-sm font-medium absolute top-10 left-1/2 transform -translate-x-1/2 whitespace-nowrap ${
-                currentStep >= step.id ? "text-black" : "text-gray-400"
+                stepCurrent >= step.id ? "text-black" : "text-gray-400"
               }`}
             >
               {/* 插入变量 */}
