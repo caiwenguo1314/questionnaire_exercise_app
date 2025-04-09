@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
-import { QuestionnaireContextType } from "../types/form";
+import { QuestionnaireContextType,AssuredPerson } from "../types/form";
 import { useNavigate } from "react-router-dom";
 
 export const questionnaireContext =
@@ -84,12 +84,17 @@ export function QuestionnaireContextProvider({
       // console.log("submit");
     }
   };
+  /* 创建一个接受数据的数组 */
+  const [selectedCardData, setSelectedCardData] =
+    useState<AssuredPerson | null>(null);
   const value = {
     AssuredCardData,
     Steps,
     stepCurrent,
     setStepCurrent,
     footButtonOnClick,
+    selectedCardData,
+    setSelectedCardData,
   };
   return (
     /* value 属性接受一个对象，第一个{}表示表达式，如果分开写还需要一个{}，类同style */

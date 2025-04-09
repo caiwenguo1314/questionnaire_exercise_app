@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import { AssuredPerson } from "../../types/form";
+import useQuestionnaireContext from "hooks/useQuestionnaireContext";
 /* 定义CardData接口 */
 // interface AssuredCardData {
 //   name: string;
@@ -21,11 +22,15 @@ export default function AssuredCard({
   const [selected, setSelected] = useState<boolean[]>(
     Array(AssuredCardData.length).fill(false)
   );
+  const { selectedCardData, setSelectedCardData } = useQuestionnaireContext();
   /* 找到选中的卡片 */
   useEffect(() => {
     const selectedCard: number = selected.findIndex((item) => item === true);
-    console.log(selectedCard);
-  }, [selected]);
+    if (selectedCard !== -1) {
+      setSelectedCardData(AssuredCardData[selectedCard]);
+    }
+    console.log(selectedCardData);
+  }, [selected, AssuredCardData, selectedCardData, setSelectedCardData]);
 
   /* 创建一个单击响应函数，来改变card的状态，其中如果卡片的index和状态数组的i相等，正变为true其他为false，如果想储存状态就要用item */
   const handleClick = (index: number) => {
@@ -43,7 +48,9 @@ export default function AssuredCard({
           {/* 处理选中，开相对定位，绑单击事件，这是一个类radio的checkBox,外圈 */}
           <div
             className={`w-5 h-5 border rounded-full relative top-3 left-5 ${
-              selected[index] ? "bg-blue-500" : " border-gray-600"
+              selectedCardData?.name === item.name
+                ? "bg-blue-500"
+                : " border-gray-600"
             } flex justify-center items-center shadow-lg `}
             /* 传入index，实参 */
             onClick={() => handleClick(index)}
@@ -51,7 +58,7 @@ export default function AssuredCard({
             {/* 内圈强制居中 */}
             <div
               className={`w-2 h-2  rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 ${
-                selected[index] ? "bg-white" : "border-none"
+                selectedCardData?.name ? "bg-white" : "border-none"
               }`}
             ></div>
           </div>
