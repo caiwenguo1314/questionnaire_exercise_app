@@ -8,7 +8,6 @@ export default function PageLayout() {
   /* 使用自定义钩子 */
   const { Steps, stepCurrent, footButtonOnClick } = useQuestionnaireContext();
 
-
   return (
     <div className="min-h-screen flex flex-col overflow-hidden">
       <header className="mt-4">
@@ -36,10 +35,13 @@ export default function PageLayout() {
         </div>
       </header>
       {/* 主要内容区,语义标签且唯一 */}
-      <main className="flex-1 bg-gray-100 overflow-auto">
+      <main className="flex-1 bg-gray-100 ">
         {/* 步骤条 */}
         <StepProgress steps={Steps} />
-        <div className="max-w-4xl mx-auto px-4 py-6">
+        <div
+          className="max-w-4xl mx-auto px-4 py-6 max-h-[530px] 
+        overflow-y-auto overflow-x-hidden custom-scrollbar"
+        >
           <Outlet />
         </div>
       </main>
@@ -52,7 +54,11 @@ export default function PageLayout() {
           </span>
         </div>
         <div className="flex w-full bg-write justify-end h-20 items-center ">
-          <FootButton label="Back" current={stepCurrent} onClick={footButtonOnClick} />
+          <FootButton
+            label="Back"
+            current={stepCurrent}
+            onClick={footButtonOnClick}
+          />
           <FootButton
             label="Continue"
             current={stepCurrent}

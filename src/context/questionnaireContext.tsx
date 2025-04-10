@@ -1,5 +1,5 @@
 import React, { createContext, useEffect, useState } from "react";
-import { QuestionnaireContextType,AssuredPerson } from "../types/form";
+import { QuestionnaireContextType, AssuredPerson } from "../types/form";
 import { useNavigate } from "react-router-dom";
 
 export const questionnaireContext =
@@ -53,6 +53,32 @@ export function QuestionnaireContextProvider({
         },
       ],
     },
+    {
+      name: "Jane Lou",
+      insurance: [
+        {
+          insurancePiece: "Piece of CakeTerm InsuranceA",
+          insuranceNumber: "P30000000231",
+        },
+        {
+          insurancePiece: "Piece of CakeTerm InsuranceB",
+          insuranceNumber: "P30000000762",
+        },
+      ],
+    },
+    {
+      name: "Jane Lou",
+      insurance: [
+        {
+          insurancePiece: "Piece of CakeTerm InsuranceA",
+          insuranceNumber: "P30000000231",
+        },
+        {
+          insurancePiece: "Piece of CakeTerm InsuranceB",
+          insuranceNumber: "P30000000762",
+        },
+      ],
+    },
   ];
   /* 创建虚拟步骤条数据，是一个数组 */
   const Steps = [
@@ -86,6 +112,7 @@ export function QuestionnaireContextProvider({
   };
   /* 创建一个接受数据的数组 */
   const [selectedCardData, setSelectedCardData] =
+  /* useState这里要明确接受参数的类型 */
     useState<AssuredPerson | null>(null);
   const value = {
     AssuredCardData,

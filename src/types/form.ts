@@ -18,6 +18,6 @@ export interface QuestionnaireContextType {
   stepCurrent: number;
   setStepCurrent: (step: number) => void;
   footButtonOnClick: (label: string) => void;
-  selectedCardData: AssuredPerson|null;
-  setSelectedCardData: (Data:AssuredPerson) => void;
+  selectedCardData: AssuredPerson | null;
+  setSelectedCardData: (Data: AssuredPerson | null) => void;
 }

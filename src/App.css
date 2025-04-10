@@ -1,0 +1,31 @@
+/* ... 其他样式 ... */
+
+/* 自定义滚动条样式 */
+.custom-scrollbar {
+  /* 设置Firefox浏览器的滚动条宽度和颜色 */
+  scrollbar-width: thin;  /* Firefox */
+  /* Firefox滚动条的两个颜色分别代表：第一个是滑块颜色，第二个是轨道颜色 */
+  scrollbar-color: #c1c5c5 #F1F5F9;  /* Firefox */
+}
+
+.custom-scrollbar::-webkit-scrollbar {
+  /* 设置Webkit浏览器（如Chrome）的滚动条宽度 */
+  width: 6px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-track {
+  /* 设置滚动条轨道的背景色和圆角 */
+  background: #F1F5F9;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb {
+  /* 设置滚动条滑块的背景色和圆角 */
+  background-color: #CBD5E1;
+  border-radius: 3px;
+}
+
+.custom-scrollbar::-webkit-scrollbar-thumb:hover {
+  /* 设置滚动条滑块悬停时的背景色 */
+  background-color: #94A3B8;
+}
