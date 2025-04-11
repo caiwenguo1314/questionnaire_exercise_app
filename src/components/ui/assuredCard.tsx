@@ -1,4 +1,4 @@
-import  { useState,  } from "react";
+import { useEffect, useState } from "react";
 import { AssuredPerson } from "../../types/form";
 import useQuestionnaireContext from "hooks/useQuestionnaireContext";
 /* 定义CardData接口 */
@@ -35,14 +35,20 @@ export default function AssuredCard({
   /* 创建一个单击响应函数，来改变card的状态，其中如果卡片的index和状态数组的i相等，正变为true其他为false，如果想储存状态就要用item */
   const handleClick = (index: number) => {
     /* useState中的set函数，源码中会判断 当传入函数时把当前状态传入函数作为参数，如果为参数时直接修改当前状态 */
-    setSelected((prev) => prev.map((item, i) => (i === index ? !item : false)));
-    if (selected[index]) {
-      setSelectedCardData(AssuredCardData[index]);
-    } else {
-      setSelectedCardData(null);
-    }
-    console.log(selectedCardData);
+    setSelected((prev) => {
+      const tempSelected = prev.map((item, i) => (i === index ? !item : false));
+      if (tempSelected[index]) {
+        setSelectedCardData(AssuredCardData[index]);
+      } else {
+        setSelectedCardData(null);
+      }      
+      return tempSelected;
+    });
+
   };
+  useEffect (() => {
+    console.log(selectedCardData); 
+  })
   return (
     <div>
       {/* 遍历 */}
