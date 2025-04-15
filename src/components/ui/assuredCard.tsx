@@ -48,7 +48,7 @@ export default function AssuredCard({
   };
   useEffect (() => {
     console.log(selectedCardData); 
-  })
+  }, [selectedCardData])
   return (
     <div>
       {/* 遍历 */}

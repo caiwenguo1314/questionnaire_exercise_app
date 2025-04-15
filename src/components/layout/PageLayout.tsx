@@ -35,7 +35,8 @@ export default function PageLayout() {
         </div>
       </header>
       {/* 主要内容区,语义标签且唯一 */}
-      <main className="flex-1 bg-gray-100 ">
+      {/* <main className="flex-1 bg-gray-100"> */}
+      <main className={`flex-1 ${stepCurrent===1?'bg-gray-100':'bg-white-50'}`}>
         {/* 步骤条 */}
         <StepProgress steps={Steps} />
         <div
@@ -46,7 +47,7 @@ export default function PageLayout() {
         </div>
       </main>
       {/* 底部页脚 */}
-      <footer className="relative">
+      <footer className="relative border-t-2 border-gray-100 ">
         <div className="absolute -top-8 left-8">
           <span>
             In case of any queries, please contact our customers relations

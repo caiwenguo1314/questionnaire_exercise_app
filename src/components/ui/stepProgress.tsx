@@ -22,7 +22,7 @@ export default function StepProgress(
 
   return (
     /* 最外层包裹元素，设置居中，间距等 */
-    <div className="flex items-center justify-center space-r-4 p-4">
+    <div className="flex items-center justify-center space-r-4 p-4 mb-4">
       {/* 遍历steps数组，生成每个步骤的元素, 对steps这个数组中每个元素都执行以下操作，并返回*/}
       {steps.map((step, index) => (
         /* 我的理解 所有返回的也需要在一个总的div中 */
