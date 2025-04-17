@@ -48,7 +48,7 @@ export default function PageLayout() {
       </main>
       {/* 底部页脚 */}
       <footer className="relative border-t-2 border-gray-100 ">
-        <div className="absolute -top-8 left-8">
+        <div className="absolute -top-8 left-8 ">
           <span>
             In case of any queries, please contact our customers relations
             officer at Prudential Customers Line:1500085/1500577
