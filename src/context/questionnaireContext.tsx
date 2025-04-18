@@ -110,9 +110,13 @@ export function QuestionnaireContextProvider({
       // console.log("submit");
     }
   };
+  /* 创建一个useState来管理点击的状态，为了实现每个card的单独控制， */
+  const [selected, setSelected] = useState<boolean[]>(
+    Array(AssuredCardData.length).fill(false)
+  );
   /* 创建一个接受数据的数组 */
   const [selectedCardData, setSelectedCardData] =
-  /* useState这里要明确接受参数的类型 */
+    /* useState这里要明确接受参数的类型 */
     useState<AssuredPerson | null>(null);
   const value = {
     AssuredCardData,
@@ -122,6 +126,8 @@ export function QuestionnaireContextProvider({
     footButtonOnClick,
     selectedCardData,
     setSelectedCardData,
+    selected,
+    setSelected,
   };
   return (
     /* value 属性接受一个对象，第一个{}表示表达式，如果分开写还需要一个{}，类同style */

@@ -1,13 +1,23 @@
 import { SettingOutlined } from "@ant-design/icons";
 import FootButton from "components/ui/footButton";
 import StepProgress from "components/ui/stepProgress";
-import { Outlet } from "react-router-dom";
+import { Outlet, useLocation } from "react-router-dom";
 import useQuestionnaireContext from "hooks/useQuestionnaireContext";
+import { useEffect, useRef } from "react";
 
 export default function PageLayout() {
   /* 使用自定义钩子 */
   const { Steps, stepCurrent, footButtonOnClick } = useQuestionnaireContext();
-
+  const {pathname} = useLocation()
+  const contentRef = useRef<HTMLDivElement>(null)
+  useEffect(()=>{
+    if(contentRef.current){
+      contentRef.current.scrollTo({
+        top:0,
+        behavior:'smooth'
+      }) 
+    }// 滚动到顶部
+  },[pathname])
   return (
     <div className="min-h-screen flex flex-col overflow-hidden">
       <header className="mt-4">
@@ -39,9 +49,9 @@ export default function PageLayout() {
       <main className={`flex-1 ${stepCurrent===1?'bg-gray-100':'bg-white-50'}`}>
         {/* 步骤条 */}
         <StepProgress steps={Steps} />
-        <div
+        <div ref={contentRef}
           className="max-w-4xl mx-auto px-4 py-6 max-h-[530px] 
-        overflow-y-auto overflow-x-hidden custom-scrollbar"
+        overflow-y-auto overflow-x-hidden custom-scrollbar transition-opacity duration-300"
         >
           <Outlet />
         </div>

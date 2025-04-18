@@ -18,11 +18,8 @@ export default function AssuredCard({
   /* 定义接受一个包含data结构形式对象的数组 */
   AssuredCardData: AssuredPerson[];
 }) {
-  /* 创建一个useState来管理点击的状态，为了实现每个card的单独控制， */
-  const [selected, setSelected] = useState<boolean[]>(
-    Array(AssuredCardData.length).fill(false)
-  );
-  const { selectedCardData, setSelectedCardData } = useQuestionnaireContext();
+
+  const { selectedCardData, setSelectedCardData,selected, setSelected} = useQuestionnaireContext();
   /* 找到选中的卡片 */
   // useEffect(() => {
   //   const selectedCard: number = selected.findIndex((item) => item === true);
@@ -35,8 +32,8 @@ export default function AssuredCard({
   /* 创建一个单击响应函数，来改变card的状态，其中如果卡片的index和状态数组的i相等，正变为true其他为false，如果想储存状态就要用item */
   const handleClick = (index: number) => {
     /* useState中的set函数，源码中会判断 当传入函数时把当前状态传入函数作为参数，如果为参数时直接修改当前状态 */
-    setSelected((prev) => {
-      const tempSelected = prev.map((item, i) => (i === index ? !item : false));
+    setSelected((prev:boolean[]) => {
+      const tempSelected:boolean[] = prev.map((item, i) => (i === index ? !item : false));
       if (tempSelected[index]) {
         setSelectedCardData(AssuredCardData[index]);
       } else {
@@ -48,7 +45,9 @@ export default function AssuredCard({
   };
   useEffect (() => {
     console.log(selectedCardData); 
-  }, [selectedCardData])
+    console.log(selected);
+    
+  }, [selectedCardData, selected])
   return (
     <div>
       {/* 遍历 */}

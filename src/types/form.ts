@@ -20,4 +20,6 @@ export interface QuestionnaireContextType {
   footButtonOnClick: (label: string) => void;
   selectedCardData: AssuredPerson | null;
   setSelectedCardData: (Data: AssuredPerson | null) => void;
+  setSelected: (selected:(prev: boolean[])=>boolean[]) => void;
+  selected: boolean[];
 }
