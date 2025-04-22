@@ -2,9 +2,10 @@ import useQuestionnaireContext from "hooks/useQuestionnaireContext";
 import { ExclamationCircleFilled, PlusOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import BillComponent from "components/form/BillComponent";
+import UploadCard from "components/ui/uploadCard";
 
 export default function QuestionnaireForm() {
-  const { selectedCardData } = useQuestionnaireContext();
+  const { selectedCardData, UploadCardsData } = useQuestionnaireContext();
   const inputStyle =
     "w-10/12 border border-gray-900 rounded-2xl ml-2 pl-2 h-8 bg-gray-100";
 
@@ -125,15 +126,8 @@ export default function QuestionnaireForm() {
       </h4>
       {/* 输入框外层div 选择CARD区域 */}
       <div className="flex flex-wrap ">
-        <div className="w-5/12 border h-14 rounded-2xl my-4 mr-10 ml-2"></div>
-        <div className="w-5/12 border h-14 rounded-2xl my-4 mr-10 ml-2"></div>
-        <div className="w-5/12 border h-14 rounded-2xl my-4 mr-10 ml-2"></div>
-        <div className="w-5/12 border h-14 rounded-2xl my-4 mr-10 ml-2"></div>
-        <div className="w-5/12 border h-14 rounded-2xl my-4 mr-10 ml-2"></div>
-        <div className="w-5/12 border h-14 rounded-2xl my-4 mr-10 ml-2"></div>
-        <div className="w-5/12 border h-14 rounded-2xl my-4 mr-10 ml-2"></div>
-        <div className="w-5/12 border h-14 rounded-2xl my-4 mr-10 ml-2"></div>
-        <div className="w-5/12 border h-14 rounded-2xl my-4 mr-10 ml-2"></div>
+        {UploadCardsData.map((item,index)=><UploadCard item={item} />)}
+        {/* <UploadCard UploadCardsData={UploadCardsData} /> */}
       </div>
     </div>
   );

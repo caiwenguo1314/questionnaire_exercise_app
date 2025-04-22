@@ -118,6 +118,35 @@ export function QuestionnaireContextProvider({
   const [selectedCardData, setSelectedCardData] =
     /* useState这里要明确接受参数的类型 */
     useState<AssuredPerson | null>(null);
+    const UploadCardsData = [
+      {
+        name:"Doctor's statement/Discharge summary",
+      },
+      {
+        name:"Original official receipt and breakdown of billing",
+      },
+      {
+        name:"Personal identity card",
+      },
+      {
+        name:"Results and interpretation of laboratory and diagnostic tests",
+      },
+      {
+        name:"Passport and/or boarding passName change letter",
+      },
+      {
+        name:"Name change letter",
+      },
+      {
+        name:"Coordination of bene fits from other insurance",
+      },
+      {
+        name:"Attachment of room prices in hospital",
+      },
+      {
+        name:"Other documents(if any)",
+      },
+    ]
   const value = {
     AssuredCardData,
     Steps,
@@ -128,7 +157,9 @@ export function QuestionnaireContextProvider({
     setSelectedCardData,
     selected,
     setSelected,
+    UploadCardsData,
   };
+ 
   return (
     /* value 属性接受一个对象，第一个{}表示表达式，如果分开写还需要一个{}，类同style */
     <questionnaireContext.Provider value={value}>

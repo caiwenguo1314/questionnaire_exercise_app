@@ -7,9 +7,13 @@ export interface AssuredPerson {
   name: string;
   insurance: Insurance[];
 }
+
 export interface Step {
   id: number;
   label: string;
+}
+export interface UploadCardData {
+  name: string;
 }
 
 export interface QuestionnaireContextType {
@@ -20,6 +24,7 @@ export interface QuestionnaireContextType {
   footButtonOnClick: (label: string) => void;
   selectedCardData: AssuredPerson | null;
   setSelectedCardData: (Data: AssuredPerson | null) => void;
-  setSelected: (selected:(prev: boolean[])=>boolean[]) => void;
+  setSelected: (selected: (prev: boolean[]) => boolean[]) => void;
   selected: boolean[];
+  UploadCardsData:UploadCardData[];
 }
