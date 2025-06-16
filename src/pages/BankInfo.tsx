@@ -1,13 +1,18 @@
 import React, { useEffect, useState } from "react";
 
 export default function BankInfo() {
+  /* 定义input的基本style */
   const inputStyle =
     "w-10/12 border border-gray-900 rounded-2xl ml-2 pl-2 h-8 bg-gray-100";
+    /* 定义一个防抖函数 */
   const debounceFunction = (fn: Function, delay: number) => {
+    /* 声明timer，同时定义类型 */
     let timer: NodeJS.Timeout;
-    return function (this: any, ...args: any[]) {
+    /* 返回执行回调函数 */
+    return function (this: Function, ...args:[]) {
       clearTimeout(timer);
       timer = setTimeout(() => {
+        /* 将this指针指向fn（fn为接受的函数参数），arg为剩余参数是一个数组 */
         fn.apply(this, args);
       }, delay);
     };
