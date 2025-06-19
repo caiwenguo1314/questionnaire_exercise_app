@@ -4,47 +4,116 @@ export default function BankInfo() {
   /* 定义input的基本style */
   const inputStyle =
     "w-10/12 border border-gray-900 rounded-2xl ml-2 pl-2 h-8 bg-gray-100";
-    /* 定义一个防抖函数 */
+  /* 定义一个防抖函数 */
   const debounceFunction = (fn: Function, delay: number) => {
-    /* 声明timer，同时定义类型 */
     let timer: NodeJS.Timeout;
-    /* 返回执行回调函数 */
-    return function (this: Function, ...args:[]) {
+    return function (...args: []) {
       clearTimeout(timer);
       timer = setTimeout(() => {
-        /* 将this指针指向fn（fn为接受的函数参数），arg为剩余参数是一个数组 */
-        fn.apply(this, args);
+        fn(...args);
       }, delay);
     };
   };
 
-  const [inputValidation, setInputValidation] = useState<boolean[]>(
-    Array(5).fill(false)
-  );
-
-  const inputHandleOnChange = debounceFunction(
-    (event: React.ChangeEvent<HTMLInputElement>) => {
-      console.log(event.target.value);
-      if (event.target.value.length > 0 && event.target.value.length < 20) {
-        setInputValidation((prev) => {
-          const newArr = [...prev];
-          newArr[0] = true;
-          console.log("newArr:", newArr);
-          return newArr;
-        });
+  // interface validationState {
+  //   AccountHolderName: boolean;
+  //   BankName: boolean;
+  //   BankAccountNumber: boolean;
+  //   BranchName: boolean;
+  //   BranchAddress: boolean;
+  // }
+  /* 我要定义一个对象来保存每一个input的状态 */
+  const [validationState, setValidationState] = useState({
+    AccountHolderName: false,
+    BankName: false,
+    BankAccountNumber: false,
+    BranchName: false,
+    BranchAddress: false,
+  });
+  /* 我要定义一个接受value的对象，来保存value的值 */
+  const [inputValue, setInputValue] = useState({
+    AccountHolderName: "",
+    BankName: "",
+    BankAccountNumber: "",
+    BranchName: "",
+    BranchAddress: "",
+  });
+  /* 我要定义一个函数来处理input的onChange事件,接受event并用inputValue来保存 */
+  const updateInputValueHandler = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
+    const value = event.target.value;
+    const name = event.target.name;
+    // const newInputValue = { ...inputValue, [name]: value };
+    const newInputValue = { ...inputValue, [name]: value };
+    setInputValue(newInputValue);
+    console.log(newInputValue);
+    const newValidationState = { ...validationState, [name]: true };
+    setValidationState(newValidationState);
+    console.log(newValidationState);
+  };
+  /* 下面我要写一个higher-order function 来做对event.target.value的校验 
+  包括length、regex*/
+  const validateInputEvent = (
+    minlength: number,
+    maxlength: number,
+    regex: RegExp
+  ) => {
+    return (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value;
+      const name = event.target.name;
+      if (
+        value.length >= minlength &&
+        value.length <= maxlength &&
+        regex.test(value)
+      ) {
+        updateInputValueHandler(event);
       } else {
-        setInputValidation((prev) => {
-          const newArr = [...prev];
-          newArr[0] = false;
-          return newArr;
-        });
+        const newInputValue = { ...inputValue, [name]: "" };
+        setInputValue(newInputValue);
+        const newValidationState = { ...validationState, [name]: false };
+        setValidationState(newValidationState);
+        console.log(`Validation failed for ${name}: value=${value}`);
       }
-    },
-    500
-  );
+    };
+  };
   useEffect(() => {
-    console.log(inputValidation);
-  }, [inputValidation]);
+    console.log("inputValue:", inputValue);
+    console.log("validationState:", validationState);
+  }, [inputValue, validationState]);
+  /* 定义5个input的regex */
+  interface ValidationConfig {
+    minLength: number;
+    maxLength: number;
+    regex: RegExp;
+  }
+  const inputValidationConfig: Record<string, ValidationConfig> = {
+    AccountHolderName: {
+      minLength: 2,
+      maxLength: 50,
+      regex: /^[\p{L}\s'-]+$/u,
+    },
+    BankName: {
+      minLength: 2,
+      maxLength: 100,
+      regex: /^[\p{L}\d\s()-]+$/u,
+    },
+    BankAccountNumber: {
+      minLength: 8,
+      maxLength: 34,
+      regex: /^[\d\s-]+$/u,
+    },
+    BranchName: {
+      minLength: 2,
+      maxLength: 100,
+      regex: /^[\p{L}\d\s()-]+$/u,
+    },
+    BranchAddress: {
+      minLength: 5,
+      maxLength: 200,
+      regex: /^[\p{L}\d\s,.-]+$/u,
+    },
+  };
 
   return (
     <div>
@@ -68,10 +137,18 @@ export default function BankInfo() {
             placeholder="Enter bank account holder name"
             title="Account holder's name"
             className={`${inputStyle}`}
-            onChange={inputHandleOnChange}
+            name="AccountHolderName"
+            onChange={debounceFunction(
+              validateInputEvent(
+                inputValidationConfig.AccountHolderName.minLength,
+                inputValidationConfig.AccountHolderName.maxLength,
+                inputValidationConfig.AccountHolderName.regex
+              ),
+              300
+            )}
           />
-          {!inputValidation[0] && (
-            <h4 className="text-red-700 pl-3">请输入正确的姓名</h4>
+          {!validationState.AccountHolderName && (
+            <h4 className="text-red-700 pl-3">请正确输入</h4>
           )}
         </div>
         <div className="w-1/2 my-4">
@@ -83,7 +160,19 @@ export default function BankInfo() {
             placeholder="Bank name"
             title="Bank name"
             className={`${inputStyle}`}
+            name="BankName"
+            onChange={debounceFunction(
+              validateInputEvent(
+                inputValidationConfig.BankName.minLength,
+                inputValidationConfig.BankName.maxLength,
+                inputValidationConfig.BankName.regex
+              ),
+              300
+            )}
           />
+          {!validationState.BankName && (
+            <h4 className="text-red-700 pl-3">请正确输入</h4>
+          )}
         </div>
         <div className="w-1/2 my-4">
           <h4 className="pl-3">
@@ -94,7 +183,19 @@ export default function BankInfo() {
             placeholder="Enter bank account number"
             title="Bank account number"
             className={`${inputStyle}`}
+            name="BankAccountNumber"
+            onChange={debounceFunction(
+              validateInputEvent(
+                inputValidationConfig.BankAccountNumber.minLength,
+                inputValidationConfig.BankAccountNumber.maxLength,
+                inputValidationConfig.BankAccountNumber.regex
+              ),
+              300
+            )}
           />
+          {!validationState.BankAccountNumber && (
+            <h4 className="text-red-700 pl-3">请正确输入</h4>
+          )}
         </div>
         <div className="w-1/2 my-4">
           <h4 className="pl-3">Branch name</h4>
@@ -103,7 +204,19 @@ export default function BankInfo() {
             placeholder="Enter branch name"
             title="Branch name"
             className={`${inputStyle}`}
+            name="BranchName"
+            onChange={debounceFunction(
+              validateInputEvent(
+                inputValidationConfig.BranchName.minLength,
+                inputValidationConfig.BranchName.maxLength,
+                inputValidationConfig.BranchName.regex
+              ),
+              300
+            )}
           />
+          {!validationState.BranchName && (
+            <h4 className="text-red-700 pl-3">请正确输入</h4>
+          )}
         </div>
         <div className="w-1/2 my-4">
           <h4 className="pl-3">Branch address</h4>
@@ -112,7 +225,19 @@ export default function BankInfo() {
             placeholder="Branch address"
             title="Branch address"
             className={`${inputStyle}`}
+            name="BranchAddress"
+            onChange={debounceFunction(
+              validateInputEvent(
+                inputValidationConfig.BranchAddress.minLength,
+                inputValidationConfig.BranchAddress.maxLength,
+                inputValidationConfig.BranchAddress.regex
+              ),
+              300
+            )}
           />
+          {!validationState.BranchAddress && (
+            <h4 className="text-red-700 pl-3">请正确输入</h4>
+          )}
         </div>
       </div>
     </div>
