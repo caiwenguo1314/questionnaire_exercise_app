@@ -1,4 +1,6 @@
 import React, { useEffect, useState } from "react";
+import useQuestionnaireContext from "hooks/useQuestionnaireContext";
+import UploadCard from "components/ui/uploadCard";
 
 export default function BankInfo() {
   /* 定义input的基本style */
@@ -14,7 +16,9 @@ export default function BankInfo() {
       }, delay);
     };
   };
-
+  /* 接受context */
+  const { validationState, setValidationState, inputValue, setInputValue } =
+    useQuestionnaireContext();
   // interface validationState {
   //   AccountHolderName: boolean;
   //   BankName: boolean;
@@ -23,21 +27,21 @@ export default function BankInfo() {
   //   BranchAddress: boolean;
   // }
   /* 我要定义一个对象来保存每一个input的状态 */
-  const [validationState, setValidationState] = useState({
-    AccountHolderName: false,
-    BankName: false,
-    BankAccountNumber: false,
-    BranchName: false,
-    BranchAddress: false,
-  });
+  // const [validationState, setValidationState] = useState({
+  //   AccountHolderName: false,
+  //   BankName: false,
+  //   BankAccountNumber: false,
+  //   BranchName: false,
+  //   BranchAddress: false,
+  // });
   /* 我要定义一个接受value的对象，来保存value的值 */
-  const [inputValue, setInputValue] = useState({
-    AccountHolderName: "",
-    BankName: "",
-    BankAccountNumber: "",
-    BranchName: "",
-    BranchAddress: "",
-  });
+  // const [inputValue, setInputValue] = useState({
+  //   AccountHolderName: "",
+  //   BankName: "",
+  //   BankAccountNumber: "",
+  //   BranchName: "",
+  //   BranchAddress: "",
+  // });
   /* 我要定义一个函数来处理input的onChange事件,接受event并用inputValue来保存 */
   const updateInputValueHandler = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -81,12 +85,13 @@ export default function BankInfo() {
     console.log("inputValue:", inputValue);
     console.log("validationState:", validationState);
   }, [inputValue, validationState]);
-  /* 定义5个input的regex */
+  /* 配置ValidationConfig*/
   interface ValidationConfig {
     minLength: number;
     maxLength: number;
     regex: RegExp;
   }
+  /* 定义个input的ValidationConfig */
   const inputValidationConfig: Record<string, ValidationConfig> = {
     AccountHolderName: {
       minLength: 2,
@@ -114,7 +119,10 @@ export default function BankInfo() {
       regex: /^[\p{L}\d\s,.-]+$/u,
     },
   };
-
+  const [selected, setSelected] = useState(false);
+  const onClick = () => {
+    setSelected(!selected);
+  };
   return (
     <div>
       <h1 className="text-3xl font-bold">Add New Payout Account</h1>
@@ -239,6 +247,26 @@ export default function BankInfo() {
             <h4 className="text-red-700 pl-3">请正确输入</h4>
           )}
         </div>
+      </div>
+      <UploadCard item={{ name: "First page savings book" }} />
+      <div className="w-full  flex justify-start items-center py-2">
+        <div
+          className={`w-4 h-4 border rounded-full relative mr-2 ${
+            selected ? "bg-blue-500" : " border-gray-600"
+          } flex justify-center items-center shadow-lg `}
+          onClick={onClick}
+        >
+          <div
+            className={`w-1.5 h-1.5  rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 "bg-white" ${
+              selected ? "bg-white" : "border-none"
+            }`}
+          ></div>
+        </div>
+        <span className="text-xs">
+          I declare that have read under stood and fully agreed to the{" "}
+          <span className="text-red-600">Terms and Conditions</span> for adding
+          the new payout account including the privacy policy.
+        </span>
       </div>
     </div>
   );

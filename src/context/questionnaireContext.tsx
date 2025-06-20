@@ -118,35 +118,51 @@ export function QuestionnaireContextProvider({
   const [selectedCardData, setSelectedCardData] =
     /* useState这里要明确接受参数的类型 */
     useState<AssuredPerson | null>(null);
-    const UploadCardsData = [
-      {
-        name:"Doctor's statement/Discharge summary",
-      },
-      {
-        name:"Original official receipt and breakdown of billing",
-      },
-      {
-        name:"Personal identity card",
-      },
-      {
-        name:"Results and interpretation of laboratory and diagnostic tests",
-      },
-      {
-        name:"Passport and/or boarding passName change letter",
-      },
-      {
-        name:"Name change letter",
-      },
-      {
-        name:"Coordination of bene fits from other insurance",
-      },
-      {
-        name:"Attachment of room prices in hospital",
-      },
-      {
-        name:"Other documents(if any)",
-      },
-    ]
+  const UploadCardsData = [
+    {
+      name: "Doctor's statement/Discharge summary",
+    },
+    {
+      name: "Original official receipt and breakdown of billing",
+    },
+    {
+      name: "Personal identity card",
+    },
+    {
+      name: "Results and interpretation of laboratory and diagnostic tests",
+    },
+    {
+      name: "Passport and/or boarding passName change letter",
+    },
+    {
+      name: "Name change letter",
+    },
+    {
+      name: "Coordination of bene fits from other insurance",
+    },
+    {
+      name: "Attachment of room prices in hospital",
+    },
+    {
+      name: "Other documents(if any)",
+    },
+  ];
+  /* 定义一个input的状态 */
+  const [validationState, setValidationState] = useState({
+    AccountHolderName: false,
+    BankName: false,
+    BankAccountNumber: false,
+    BranchName: false,
+    BranchAddress: false,
+  });
+   /* 我要定义一个接受value的对象，来保存value的值 */
+  const [inputValue, setInputValue] = useState({
+      AccountHolderName: "",
+      BankName: "",
+      BankAccountNumber: "",
+      BranchName: "",
+      BranchAddress: "",
+    });
   const value = {
     AssuredCardData,
     Steps,
@@ -158,8 +174,12 @@ export function QuestionnaireContextProvider({
     selected,
     setSelected,
     UploadCardsData,
+    validationState,
+    setValidationState,
+    inputValue,
+    setInputValue,
   };
- 
+
   return (
     /* value 属性接受一个对象，第一个{}表示表达式，如果分开写还需要一个{}，类同style */
     <questionnaireContext.Provider value={value}>
