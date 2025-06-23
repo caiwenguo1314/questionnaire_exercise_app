@@ -15,6 +15,20 @@ export interface Step {
 export interface UploadCardData {
   name: string;
 }
+export interface validationState {
+  AccountHolderName: boolean;
+  BankName: boolean;
+  BankAccountNumber: boolean;
+  BranchName: boolean;
+  BranchAddress: boolean;
+}
+export interface inputValue {
+  AccountHolderName: string;
+  BankName: string;
+  BankAccountNumber: string;
+  BranchName: string;
+  BranchAddress: string;
+}
 
 export interface QuestionnaireContextType {
   AssuredCardData: AssuredPerson[];
@@ -26,5 +40,9 @@ export interface QuestionnaireContextType {
   setSelectedCardData: (Data: AssuredPerson | null) => void;
   setSelected: (selected: (prev: boolean[]) => boolean[]) => void;
   selected: boolean[];
-  UploadCardsData:UploadCardData[];
+  UploadCardsData: UploadCardData[];
+  validationState: validationState;
+  setValidationState: (validationState: validationState) => void;
+  inputValue: inputValue;
+  setInputValue: (inputValue: inputValue) => void;
 }

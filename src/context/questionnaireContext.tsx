@@ -126,6 +126,22 @@ export function QuestionnaireContextProvider({
       name: "Other documents(if any)",
     },
   ];
+  /* 定义一个input的状态 */
+  const [validationState, setValidationState] = useState({
+    AccountHolderName: false,
+    BankName: false,
+    BankAccountNumber: false,
+    BranchName: false,
+    BranchAddress: false,
+  });
+   /* 我要定义一个接受value的对象，来保存value的值 */
+  const [inputValue, setInputValue] = useState({
+      AccountHolderName: "",
+      BankName: "",
+      BankAccountNumber: "",
+      BranchName: "",
+      BranchAddress: "",
+    });
   const value = {
     AssuredCardData,
     Steps,
@@ -137,6 +153,10 @@ export function QuestionnaireContextProvider({
     selected,
     setSelected,
     UploadCardsData,
+    validationState,
+    setValidationState,
+    inputValue,
+    setInputValue,
   };
 
   return (
