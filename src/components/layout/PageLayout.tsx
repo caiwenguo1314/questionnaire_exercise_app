@@ -67,12 +67,12 @@ export default function PageLayout() {
         <div className="flex w-full bg-write justify-end h-20 items-center ">
           <FootButton
             label="Back"
-            current={stepCurrent}
+            stepCurrent={stepCurrent}
             onClick={footButtonOnClick}
           />
           <FootButton
             label="Continue"
-            current={stepCurrent}
+            stepCurrent={stepCurrent}
             onClick={footButtonOnClick}
           />
         </div>
