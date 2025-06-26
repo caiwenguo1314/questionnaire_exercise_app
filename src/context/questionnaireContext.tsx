@@ -87,10 +87,9 @@ export function QuestionnaireContextProvider({
       setStepCurrent(stepCurrent - 1);
       // console.log("back", stepCurrent);
     } else if (label === "Continue" && stepCurrent < RouterData.length) {
-      if (selected.includes(true)&& stepCurrent === 1) {
+      if (selected.includes(true) && stepCurrent === 1) {
         setStepCurrent(stepCurrent + 1);
       }
-      
 
       // console.log("continue", stepCurrent);
     } else if (label === "Continue" && stepCurrent === RouterData.length) {
@@ -134,14 +133,42 @@ export function QuestionnaireContextProvider({
     BranchName: false,
     BranchAddress: false,
   });
-   /* 我要定义一个接受value的对象，来保存value的值 */
+  /* 我要定义一个接受inputValue的对象，来保存inputValue的值 */
   const [inputValue, setInputValue] = useState({
-      AccountHolderName: "",
-      BankName: "",
-      BankAccountNumber: "",
-      BranchName: "",
-      BranchAddress: "",
-    });
+    AccountHolderName: "",
+    BankName: "",
+    BankAccountNumber: "",
+    BranchName: "",
+    BranchAddress: "",
+  });
+  /* 我要定义负责页面跳转的状态，因为我需要按页面来分，我想要把它定义成一个数组和current相关 */
+  const [pageState, setPageState] = useState<Record<string, boolean>>(
+    Steps.reduce((acc, item) => {
+      acc[item.label] = false;
+      return acc;
+    }, {} as Record<string, boolean>)
+  );
+  useEffect(() => {
+    if (selected.includes(true)) {
+      setPageState((prev) => {
+        return {
+          ...prev,
+          [Steps[0].label]: true,
+        };
+      });
+    } else {
+      setPageState((prev) => {
+        return {
+          ...prev,
+          [Steps[0].label]: false,
+        };
+      });
+    }      
+  }, [selected]);
+  useEffect(() => {
+    console.log('pageState:', pageState);
+  },[pageState])
+  /* 创建一个value对象，收集所有需要传递的内容 */
   const value = {
     AssuredCardData,
     Steps,
@@ -157,6 +184,8 @@ export function QuestionnaireContextProvider({
     setValidationState,
     inputValue,
     setInputValue,
+    pageState,
+    setPageState,
   };
 
   return (
