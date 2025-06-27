@@ -81,21 +81,7 @@ export function QuestionnaireContextProvider({
   const [selectedCardData, setSelectedCardData] =
     /* useState这里要明确接受参数的类型 */
     useState<AssuredPerson | null>(null);
-  /* 底部按钮的onClick函数 */
-  const footButtonOnClick = (label: string) => {
-    if (label === "Back" && stepCurrent > 1) {
-      setStepCurrent(stepCurrent - 1);
-      // console.log("back", stepCurrent);
-    } else if (label === "Continue" && stepCurrent < RouterData.length) {
-      if (selected.includes(true) && stepCurrent === 1) {
-        setStepCurrent(stepCurrent + 1);
-      }
 
-      // console.log("continue", stepCurrent);
-    } else if (label === "Continue" && stepCurrent === RouterData.length) {
-      // console.log("submit");
-    }
-  };
   const UploadCardsData = [
     {
       name: "Doctor's statement/Discharge summary",
@@ -126,7 +112,7 @@ export function QuestionnaireContextProvider({
     },
   ];
   /* 定义一个input的状态 */
-  const [validationState, setValidationState] = useState({
+  const [thirdValidationState, setThirdValidationState] = useState({
     AccountHolderName: false,
     BankName: false,
     BankAccountNumber: false,
@@ -148,7 +134,10 @@ export function QuestionnaireContextProvider({
       return acc;
     }, {} as Record<string, boolean>)
   );
+  /* 写一个第二页的验证 */
+  const [secondPageValidation, setSecondPageValidation] = useState(true);
   useEffect(() => {
+    /* 写第一页的更新逻辑 */
     if (selected.includes(true)) {
       setPageState((prev) => {
         return {
@@ -163,11 +152,60 @@ export function QuestionnaireContextProvider({
           [Steps[0].label]: false,
         };
       });
-    }      
-  }, [selected]);
+    }
+    if (secondPageValidation) {
+      setPageState((prev) => {
+        return {
+          ...prev,
+          [Steps[1].label]: true,
+        };
+      });
+    } else {
+      setPageState((prev) => {
+        return {
+          ...prev,
+          [Steps[1].label]: false,
+        };
+      });
+    }
+    if(Object.values(thirdValidationState).every((value)=>value===true)){
+      setPageState((prev)=>{
+        return{
+          ...prev,
+          [Steps[2].label]:true
+        }
+      })
+    }else{
+      setPageState((prev)=>{
+        return{
+          ...prev,
+          [Steps[2].label]:false
+        }
+      })
+    }
+  }, [selected, secondPageValidation,thirdValidationState]);
   useEffect(() => {
-    console.log('pageState:', pageState);
-  },[pageState])
+    console.log("pageState:", pageState);
+  }, [pageState]);
+  /* 底部按钮的onClick函数 */
+  const footButtonOnClick = (label: string) => {
+    if (label === "Back" && stepCurrent > 1) {
+      setStepCurrent(stepCurrent - 1);
+      // console.log("back", stepCurrent);
+    } else if (label === "Continue" && stepCurrent < RouterData.length) {
+      if (selected.includes(true) && stepCurrent === 1) {
+        setStepCurrent(stepCurrent + 1);
+      } else if (stepCurrent === 2 && secondPageValidation) {
+        setStepCurrent(stepCurrent + 1);
+      } else if (stepCurrent === 3 && Object.values(thirdValidationState).every((value)=>value===true) ) {
+        setStepCurrent(stepCurrent + 1);
+      }
+
+      // console.log("continue", stepCurrent);
+    } else if (label === "Continue" && stepCurrent === RouterData.length) {
+      // console.log("submit");
+    }
+  };
   /* 创建一个value对象，收集所有需要传递的内容 */
   const value = {
     AssuredCardData,
@@ -180,8 +218,8 @@ export function QuestionnaireContextProvider({
     selected,
     setSelected,
     UploadCardsData,
-    validationState,
-    setValidationState,
+    thirdValidationState,
+    setThirdValidationState,
     inputValue,
     setInputValue,
     pageState,

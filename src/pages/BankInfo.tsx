@@ -17,31 +17,8 @@ export default function BankInfo() {
     };
   };
   /* 接受context */
-  const { validationState, setValidationState, inputValue, setInputValue } =
-    useQuestionnaireContext();
-  // interface validationState {
-  //   AccountHolderName: boolean;
-  //   BankName: boolean;
-  //   BankAccountNumber: boolean;
-  //   BranchName: boolean;
-  //   BranchAddress: boolean;
-  // }
-  /* 我要定义一个对象来保存每一个input的状态 */
-  // const [validationState, setValidationState] = useState({
-  //   AccountHolderName: false,
-  //   BankName: false,
-  //   BankAccountNumber: false,
-  //   BranchName: false,
-  //   BranchAddress: false,
-  // });
-  /* 我要定义一个接受value的对象，来保存value的值 */
-  // const [inputValue, setInputValue] = useState({
-  //   AccountHolderName: "",
-  //   BankName: "",
-  //   BankAccountNumber: "",
-  //   BranchName: "",
-  //   BranchAddress: "",
-  // });
+  const { thirdValidationState, setThirdValidationState, inputValue, setInputValue } =
+    useQuestionnaireContext(); 
   /* 我要定义一个函数来处理input的onChange事件,接受event并用inputValue来保存 */
   const updateInputValueHandler = (
     event: React.ChangeEvent<HTMLInputElement>
@@ -52,9 +29,9 @@ export default function BankInfo() {
     const newInputValue = { ...inputValue, [name]: value };
     setInputValue(newInputValue);
     console.log(newInputValue);
-    const newValidationState = { ...validationState, [name]: true };
-    setValidationState(newValidationState);
-    console.log(newValidationState);
+    const newThirdValidationState = { ...thirdValidationState, [name]: true };
+    setThirdValidationState(newThirdValidationState);
+    console.log(newThirdValidationState);
   };
   /* 下面我要写一个higher-order function 来做对event.target.value的校验 
   包括length、regex*/
@@ -75,16 +52,16 @@ export default function BankInfo() {
       } else {
         const newInputValue = { ...inputValue, [name]: "" };
         setInputValue(newInputValue);
-        const newValidationState = { ...validationState, [name]: false };
-        setValidationState(newValidationState);
+        const newThirdValidationState = { ...thirdValidationState, [name]: false };
+        setThirdValidationState(newThirdValidationState);
         console.log(`Validation failed for ${name}: value=${value}`);
       }
     };
   };
   useEffect(() => {
     console.log("inputValue:", inputValue);
-    console.log("validationState:", validationState);
-  }, [inputValue, validationState]);
+    console.log("thirdValidationState:", thirdValidationState);
+  }, [inputValue, thirdValidationState]);
   /* 配置ValidationConfig*/
   interface ValidationConfig {
     minLength: number;
@@ -155,7 +132,7 @@ export default function BankInfo() {
               300
             )}
           />
-          {!validationState.AccountHolderName && (
+          {!thirdValidationState.AccountHolderName && (
             <h4 className="text-red-700 pl-3">请正确输入</h4>
           )}
         </div>
@@ -178,7 +155,7 @@ export default function BankInfo() {
               300
             )}
           />
-          {!validationState.BankName && (
+          {!thirdValidationState.BankName && (
             <h4 className="text-red-700 pl-3">请正确输入</h4>
           )}
         </div>
@@ -201,7 +178,7 @@ export default function BankInfo() {
               300
             )}
           />
-          {!validationState.BankAccountNumber && (
+          {!thirdValidationState.BankAccountNumber && (
             <h4 className="text-red-700 pl-3">请正确输入</h4>
           )}
         </div>
@@ -222,7 +199,7 @@ export default function BankInfo() {
               300
             )}
           />
-          {!validationState.BranchName && (
+          {!thirdValidationState.BranchName && (
             <h4 className="text-red-700 pl-3">请正确输入</h4>
           )}
         </div>
@@ -243,7 +220,7 @@ export default function BankInfo() {
               300
             )}
           />
-          {!validationState.BranchAddress && (
+          {!thirdValidationState.BranchAddress && (
             <h4 className="text-red-700 pl-3">请正确输入</h4>
           )}
         </div>

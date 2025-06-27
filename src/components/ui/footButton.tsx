@@ -1,3 +1,4 @@
+import useQuestionnaireContext from "hooks/useQuestionnaireContext";
 import React from "react";
 
 export default function FootButton({
@@ -11,11 +12,17 @@ export default function FootButton({
   stepCurrent: number;
   onClick: (label: string) => void;
 }) {
+  const {pageState,Steps} = useQuestionnaireContext();
+  /* 写一个对continue的状态的判断 */
+  const continueValid = ()=>{
+    const stepLabel = Steps[stepCurrent -1].label;
+    return pageState[stepLabel];
+  }
   return (
     <div>
       <button
         className={`${
-          (label === "Back" && stepCurrent > 1) || (label === "Continue")
+          (label === "Back" && stepCurrent > 1) || (label === "Continue"&&continueValid())
             ? "bg-blue-500"
             : "bg-gray-500"
         } text-white border rounded-full w-28 h-10 mr-4`}

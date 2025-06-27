@@ -30,7 +30,6 @@ export interface inputValue {
   BranchAddress: string;
 }
 
-
 export interface QuestionnaireContextType {
   AssuredCardData: AssuredPerson[];
   Steps: Step[];
@@ -42,8 +41,9 @@ export interface QuestionnaireContextType {
   setSelected: (selected: (prev: boolean[]) => boolean[]) => void;
   selected: boolean[];
   UploadCardsData: UploadCardData[];
-  validationState: validationState;
-  setValidationState: (validationState: validationState) => void;
+  thirdValidationState: validationState;
+  setThirdValidationState: (validationState: validationState) => void;
   inputValue: inputValue;
   setInputValue: (inputValue: inputValue) => void;
+  pageState: Record<string, boolean>;
 }
