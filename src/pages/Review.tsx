@@ -1,8 +1,18 @@
-import React from "react";
-import useQuestionnaireContext from "hooks/useQuestionnaireContext";
+import React, { useState } from "react";
+import { AssuredPerson } from "types/form";
 
 export default function Review() {
-  const { selectedCardData, inputValue } = useQuestionnaireContext();
+  const [selectedCardData, setSelectedCardData] =
+    /* useState这里要明确接受参数的类型 */
+    useState<AssuredPerson | null>(null);
+
+  const [inputValue, setInputValue] = useState({
+    AccountHolderName: "",
+    BankName: "",
+    BankAccountNumber: "",
+    BranchName: "",
+    BranchAddress: "",
+  });
 
   return (
     <div>

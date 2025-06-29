@@ -1,11 +1,50 @@
-import useQuestionnaireContext from "hooks/useQuestionnaireContext";
 import { ExclamationCircleFilled, PlusOutlined } from "@ant-design/icons";
 import { useEffect, useState } from "react";
 import BillComponent from "components/form/BillComponent";
 import UploadCard from "components/ui/uploadCard";
 
+export interface Insurance {
+  insurancePiece: string;
+  insuranceNumber: string;
+}
+export interface AssuredPerson {
+  name: string;
+  insurance: Insurance[];
+}
 export default function QuestionnaireForm() {
-  const { selectedCardData, UploadCardsData } = useQuestionnaireContext();
+  const [selectedCardData, setSelectedCardData] =
+    /* useState这里要明确接受参数的类型 */
+    useState<AssuredPerson | null>(null);
+
+  const UploadCardsData = [
+    {
+      name: "Doctor's statement/Discharge summary",
+    },
+    {
+      name: "Original official receipt and breakdown of billing",
+    },
+    {
+      name: "Personal identity card",
+    },
+    {
+      name: "Results and interpretation of laboratory and diagnostic tests",
+    },
+    {
+      name: "Passport and/or boarding passName change letter",
+    },
+    {
+      name: "Name change letter",
+    },
+    {
+      name: "Coordination of bene fits from other insurance",
+    },
+    {
+      name: "Attachment of room prices in hospital",
+    },
+    {
+      name: "Other documents(if any)",
+    },
+  ];
   const inputStyle =
     "w-10/12 border border-gray-900 rounded-2xl ml-2 pl-2 h-8 bg-gray-100";
 
@@ -126,7 +165,9 @@ export default function QuestionnaireForm() {
       </h4>
       {/* 输入框外层div 选择CARD区域 */}
       <div className="flex flex-wrap ">
-        {UploadCardsData.map((item,index)=><UploadCard item={item} />)}
+        {UploadCardsData.map((item, index) => (
+          <UploadCard item={item} />
+        ))}
         {/* <UploadCard UploadCardsData={UploadCardsData} /> */}
       </div>
     </div>

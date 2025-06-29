@@ -11,6 +11,7 @@ import Review from "pages/Review";
 import ContinueButton from "components/ui/continueButton";
 import BackButton from "components/ui/backButton";
 import StepProgress from "components/ui/stepProgress";
+import QuestionnaireForm from "pages/QuestionnaireForm";
 
 export default function PageLayout() {
   /* 使用自定义钩子 */
@@ -28,9 +29,9 @@ export default function PageLayout() {
       selectedUserIndex={selectedUserIndex}
       setSelectedUserIndex={setSelectedUserIndex}
     />,
-    // <QuestionnaireForm />,
+    <QuestionnaireForm />,
     <BankInfo />,
-    // <Review />,
+    <Review />,
   ];
 
   useEffect(() => {
@@ -77,11 +78,13 @@ export default function PageLayout() {
       </header>
       <main>
         <StepProgress
+          currentStep={currentStep}
+          setCurrentStep={setCurrentStep}
           steps={[
-            { id: 1, label: "Policy Selection" },
-            { id: 2, label: "Questionnaire" },
-            { id: 3, label: "Bank Information" },
-            { id: 4, label: "Review" },
+            { id: 0, label: "Policy Selection" },
+            { id: 1, label: "Questionnaire" },
+            { id: 2, label: "Bank Information" },
+            { id: 3, label: "Review" },
           ]}
         />
         <div

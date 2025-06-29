@@ -3,13 +3,16 @@ import { useState } from "react";
 export default function StepProgress(
   /* 形参 */ {
     steps,
+    currentStep,
+    setCurrentStep,
   }: /* 对形参定义 */ {
     /* steps是一个数组，数组中的每个元素都是一个对象，包含两个属性，id是数字，label是字符串 */
     steps: { id: number; label: string }[];
+    currentStep: number;
+    setCurrentStep: (currentStep: number) => void;
     /* current是一个数字，表示当前步骤 */
   }
 ) {
-  const [stepCurrent, setStepCurrent] = useState(1);
   /* 定义一个状态变量，用来存储当前步骤的id */
   // const [currentStep, setCurrentStep] = useState(1);
   /** 解决从外界传入current及时渲染 */
@@ -34,22 +37,22 @@ export default function StepProgress(
               className={`w-8 h-8 flex items-center justify-center rounded-full text-white font-bold cursor-pointer transition-all duration-300 
               ${
                 /* 三元运算符 */
-                stepCurrent === step.id
+                currentStep === step.id
                   ? "bg-red-600"
-                  : stepCurrent > step.id
+                  : currentStep > step.id
                   ? "bg-gray-500"
                   : "bg-gray-300"
               }
             `} /* 注册点击事件 */
-              onClick={() => setStepCurrent(step.id)}
+              onClick={() => setCurrentStep(step.id)}
             >
               {/* 插入变量 */}
-              {step.id}
+              {step.id + 1}
             </div>
             {/* label */}
             <div /* 绝对定位，参照父元素定位，通过left-1/2 -translate-x-1/2 来居中 禁止换行 通过当前值判断颜色*/
               className={`text-sm font-medium absolute top-10 left-1/2 transform -translate-x-1/2 whitespace-nowrap ${
-                stepCurrent >= step.id ? "text-black" : "text-gray-400"
+                currentStep >= step.id ? "text-black" : "text-gray-400"
               }`}
             >
               {/* 插入变量 */}
