@@ -3,9 +3,9 @@
 /* 自定义滚动条样式 */
 .custom-scrollbar {
   /* 设置Firefox浏览器的滚动条宽度和颜色 */
-  scrollbar-width: thin;  /* Firefox */
+  scrollbar-width: thin; /* Firefox */
   /* Firefox滚动条的两个颜色分别代表：第一个是滑块颜色，第二个是轨道颜色 */
-  scrollbar-color: #c1c5c5 #F1F5F9;  /* Firefox */
+  scrollbar-color: #c1c5c5 #f1f5f9; /* Firefox */
 }
 
 .custom-scrollbar::-webkit-scrollbar {
@@ -15,17 +15,28 @@
 
 .custom-scrollbar::-webkit-scrollbar-track {
   /* 设置滚动条轨道的背景色和圆角 */
-  background: #F1F5F9;
+  background: #f1f5f9;
   border-radius: 3px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
   /* 设置滚动条滑块的背景色和圆角 */
-  background-color: #CBD5E1;
+  background-color: #cbd5e1;
   border-radius: 3px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
   /* 设置滚动条滑块悬停时的背景色 */
-  background-color: #94A3B8;
+  background-color: #94a3b8;
+}
+
+body * {
+  cursor: default;
+}
+
+/* 但保留输入框、textarea、contenteditable 等可编辑区域的原生样式 */
+input,
+textarea,
+[contenteditable="true"] {
+  cursor: text;
 }

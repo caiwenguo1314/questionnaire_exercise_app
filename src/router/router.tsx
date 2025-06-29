@@ -6,41 +6,41 @@ import PolicySelect from "pages/PolicySelect";
 import QuestionnaireForm from "pages/QuestionnaireForm";
 import Review from "pages/Review";
 import { createBrowserRouter } from "react-router-dom";
-import  Root  from "../context/Root";
+import Root from "../context/Root";
 
 export const router = createBrowserRouter([
   {
     path: "/",
-    element: <Root/>,
+    element: <Root />,
     children: [
       {
         path: "/",
-        element: <Home />,
-        errorElement: <ErrorPage />,
-      },
-      {
-        path: "/form",
         element: <PageLayout />,
         errorElement: <ErrorPage />,
-        children: [
-          {
-            path: "/form/policySelect",
-            element: <PolicySelect />,
-          },
-          {
-            path: "/form/questionnaire",
-            element: <QuestionnaireForm />,
-          },
-          {
-            path: "/form/bankInfo",
-            element: <BankInfo />,
-          },
-          {
-            path: "/form/review",
-            element: <Review />,
-          },
-        ],
       },
+      // {
+      //   path: "/form",
+      //   element: <PageLayout />,
+      //   errorElement: <ErrorPage />,
+      //   children: [
+      //     {
+      //       path: "/form/policySelect",
+      //       element: <PolicySelect />,
+      //     },
+      //     {
+      //       path: "/form/questionnaire",
+      //       element: <QuestionnaireForm />,
+      //     },
+      //     {
+      //       path: "/form/bankInfo",
+      //       element: <BankInfo />,
+      //     },
+      //     {
+      //       path: "/form/review",
+      //       element: <Review />,
+      //     },
+      //   ],
+      // },
     ],
   },
 ]);

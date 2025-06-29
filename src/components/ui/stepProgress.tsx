@@ -1,18 +1,15 @@
-import useQuestionnaireContext from "hooks/useQuestionnaireContext";
+import { useState } from "react";
 //默认导出步骤条组件
 export default function StepProgress(
   /* 形参 */ {
-    steps,    
+    steps,
   }: /* 对形参定义 */ {
     /* steps是一个数组，数组中的每个元素都是一个对象，包含两个属性，id是数字，label是字符串 */
     steps: { id: number; label: string }[];
     /* current是一个数字，表示当前步骤 */
-  
   }
 ) {
-  
-
-  const {setStepCurrent,stepCurrent} = useQuestionnaireContext();
+  const [stepCurrent, setStepCurrent] = useState(1);
   /* 定义一个状态变量，用来存储当前步骤的id */
   // const [currentStep, setCurrentStep] = useState(1);
   /** 解决从外界传入current及时渲染 */

@@ -130,7 +130,10 @@ export function QuestionnaireContextProvider({
   /* 我要定义负责页面跳转的状态，因为我需要按页面来分，我想要把它定义成一个数组和current相关 */
   const [pageState, setPageState] = useState<Record<string, boolean>>(
     Steps.reduce((acc, item) => {
+      console.log("item.label", item.label);
       acc[item.label] = false;
+
+      console.log("acc", acc);
       return acc;
     }, {} as Record<string, boolean>)
   );
@@ -168,22 +171,22 @@ export function QuestionnaireContextProvider({
         };
       });
     }
-    if(Object.values(thirdValidationState).every((value)=>value===true)){
-      setPageState((prev)=>{
-        return{
+    if (Object.values(thirdValidationState).every((value) => value === true)) {
+      setPageState((prev) => {
+        return {
           ...prev,
-          [Steps[2].label]:true
-        }
-      })
-    }else{
-      setPageState((prev)=>{
-        return{
+          [Steps[2].label]: true,
+        };
+      });
+    } else {
+      setPageState((prev) => {
+        return {
           ...prev,
-          [Steps[2].label]:false
-        }
-      })
+          [Steps[2].label]: false,
+        };
+      });
     }
-  }, [selected, secondPageValidation,thirdValidationState]);
+  }, [selected, secondPageValidation, thirdValidationState]);
   useEffect(() => {
     console.log("pageState:", pageState);
   }, [pageState]);
@@ -197,7 +200,10 @@ export function QuestionnaireContextProvider({
         setStepCurrent(stepCurrent + 1);
       } else if (stepCurrent === 2 && secondPageValidation) {
         setStepCurrent(stepCurrent + 1);
-      } else if (stepCurrent === 3 && Object.values(thirdValidationState).every((value)=>value===true) ) {
+      } else if (
+        stepCurrent === 3 &&
+        Object.values(thirdValidationState).every((value) => value === true)
+      ) {
         setStepCurrent(stepCurrent + 1);
       }
 

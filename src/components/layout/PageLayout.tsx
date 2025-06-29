@@ -1,38 +1,69 @@
 import { SettingOutlined } from "@ant-design/icons";
 import FootButton from "components/ui/footButton";
+// import StepProgress from "components/ui/stepProgress";
+// import { Outlet, useLocation } from "react-router-dom";
+// import useQuestionnaireContext from "hooks/useQuestionnaireContext";
+import { useEffect, useRef, useState } from "react";
+import PageContent from "./pageContent";
+import PolicySelect from "pages/PolicySelect";
+import BankInfo from "pages/BankInfo";
+import Review from "pages/Review";
+import ContinueButton from "components/ui/continueButton";
+import BackButton from "components/ui/backButton";
 import StepProgress from "components/ui/stepProgress";
-import { Outlet, useLocation } from "react-router-dom";
-import useQuestionnaireContext from "hooks/useQuestionnaireContext";
-import { useEffect, useRef } from "react";
 
 export default function PageLayout() {
   /* 使用自定义钩子 */
-  const { Steps, stepCurrent, footButtonOnClick } = useQuestionnaireContext();
-  const {pathname} = useLocation()
-  const contentRef = useRef<HTMLDivElement>(null)
-  useEffect(()=>{
-    if(contentRef.current){
-      contentRef.current.scrollTo({
-        top:0,
-        behavior:'smooth'
-      }) 
-    }// 滚动到顶部
-  },[pathname])
+  const [currentStep, setCurrentStep] = useState(0);
+  // const { pathname } = useLocation();
+  const contentRef = useRef<HTMLDivElement>(null);
+  const [btnDisabled, setBtnDisabled] = useState(true);
+
+  const [selectedUserIndex, setSelectedUserIndex] = useState<number | null>(
+    null
+  );
+
+  const stepContents = [
+    <PolicySelect
+      selectedUserIndex={selectedUserIndex}
+      setSelectedUserIndex={setSelectedUserIndex}
+    />,
+    // <QuestionnaireForm />,
+    <BankInfo />,
+    // <Review />,
+  ];
+
+  useEffect(() => {
+    let shouldDisable = true;
+
+    switch (currentStep) {
+      case 0:
+        shouldDisable = selectedUserIndex === null;
+        break;
+      case 1:
+      case 2:
+      case 3:
+        shouldDisable = false;
+        break;
+      default:
+        shouldDisable = true;
+    }
+
+    setBtnDisabled(shouldDisable);
+  }, [selectedUserIndex, currentStep]);
+
   return (
     <div className="min-h-screen flex flex-col overflow-hidden">
       <header className="mt-4">
-        {/* 导航条和搜索外层div */}
         <div className="flex justify-between px-6 text-2xl pb-4 border-b-2  ">
-          {/* 导航条外层div */}
           <div className="flex gap-4 font-bold">
-            <div>PRUDENTIAL</div>
-            <div>Home</div>
-            <div>Payments</div>
-            <div>Claim</div>
-            <div>Investments</div>
-            <div>Documents</div>
+            <div className="cursor-pointer">PRUDENTIAL</div>
+            <div className="cursor-pointer">Home</div>
+            <div className="cursor-pointer">Payments</div>
+            <div className="cursor-pointer">Claim</div>
+            <div className="cursor-pointer">Investments</div>
+            <div className="cursor-pointer">Documents</div>
           </div>
-          {/* 搜索外层div */}
           <div>
             <SettingOutlined className="text-3xl" />
             <input
@@ -44,36 +75,43 @@ export default function PageLayout() {
           </div>
         </div>
       </header>
-      {/* 主要内容区,语义标签且唯一 */}
-      {/* <main className="flex-1 bg-gray-100"> */}
-      <main className={`flex-1 ${stepCurrent===1?'bg-gray-100':'bg-white-50'}`}>
-        {/* 步骤条 */}
-        <StepProgress steps={Steps} />
-        <div ref={contentRef}
+      <main>
+        <StepProgress
+          steps={[
+            { id: 1, label: "Policy Selection" },
+            { id: 2, label: "Questionnaire" },
+            { id: 3, label: "Bank Information" },
+            { id: 4, label: "Review" },
+          ]}
+        />
+        <div
+          ref={contentRef}
           className="max-w-4xl mx-auto px-4 py-6 max-h-[530px] 
         overflow-y-auto overflow-x-hidden custom-scrollbar transition-opacity duration-300"
         >
-          <Outlet />
+          <PageContent currentStep={currentStep} stepContents={stepContents} />
         </div>
       </main>
-      {/* 底部页脚 */}
       <footer className="relative border-t-2 border-gray-100 ">
-        <div className="absolute -top-8 left-8 ">
+        {/* <div className="absolute -top-8 left-8 ">
           <span>
             In case of any queries, please contact our customers relations
             officer at Prudential Customers Line:1500085/1500577
           </span>
-        </div>
-        <div className="flex w-full bg-write justify-end h-20 items-center ">
-          <FootButton
+        </div> */}
+
+        <div className="fixed bottom-4 right-4 flex gap-2">
+          <BackButton
             label="Back"
-            stepCurrent={stepCurrent}
-            onClick={footButtonOnClick}
+            currentStep={currentStep}
+            setCurrentStep={setCurrentStep}
           />
-          <FootButton
+          <ContinueButton
             label="Continue"
-            stepCurrent={stepCurrent}
-            onClick={footButtonOnClick}
+            currentStep={currentStep}
+            btnDisabled={btnDisabled}
+            setCurrentStep={setCurrentStep}
+            stepContents={stepContents}
           />
         </div>
       </footer>
