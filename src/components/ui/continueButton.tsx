@@ -17,7 +17,9 @@ const ContinueButton = ({
   console.log("currentStep", currentStep);
   return (
     <Button
+      className="w-32"
       size="large"
+      shape="round"
       onClick={
         currentStep <= stepContents.length - 1
           ? () => setCurrentStep(currentStep + 1)

@@ -103,8 +103,8 @@ export default function PageLayout() {
           </span>
         </div> */}
 
-        <div className="fixed bottom-4 right-4 flex gap-2">
-          <BackButton
+        <div className="fixed bottom-4 right-4 flex gap-6">
+          <BackButton 
             label="Back"
             currentStep={currentStep}
             setCurrentStep={setCurrentStep}
