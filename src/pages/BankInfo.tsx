@@ -2,7 +2,11 @@ import React, { useEffect, useState } from "react";
 import useQuestionnaireContext from "hooks/useQuestionnaireContext";
 import UploadCard from "components/ui/uploadCard";
 
-export default function BankInfo() {
+export default function BankInfo({
+  setIsBankInfoValid,
+}: {
+  setIsBankInfoValid: (isValid: boolean) => void;
+}) {
   const inputStyle =
     "w-10/12 border border-gray-900 rounded-2xl ml-2 pl-2 h-8 bg-gray-100";
   const debounceFunction = (fn: Function, delay: number) => {
@@ -98,22 +102,18 @@ export default function BankInfo() {
               regex.test(value)
             ) {
               setAccountHolderNameDetails({
-                ...accountHolderNameDetails,
+                accountHolderNameInputFilled: true,
                 accountHolderNameValidation: true,
               });
             } else {
               setAccountHolderNameDetails({
-                ...accountHolderNameDetails,
+                accountHolderNameInputFilled: true,
                 accountHolderNameValidation: false,
               });
             }
-            setAccountHolderNameDetails({
-              ...accountHolderNameDetails,
-              accountHolderNameInputFilled: true,
-            });
           } else {
             setAccountHolderNameDetails({
-              ...accountHolderNameDetails,
+              accountHolderNameValidation: false,
               accountHolderNameInputFilled: false,
             });
           }
@@ -126,22 +126,18 @@ export default function BankInfo() {
               regex.test(value)
             ) {
               setBankNameDetails({
-                ...bankNameDetails,
+                bankNameInputFilled: true,
                 bankNameValidation: true,
               });
             } else {
               setBankNameDetails({
-                ...bankNameDetails,
+                bankNameInputFilled: true,
                 bankNameValidation: false,
               });
             }
-            setBankNameDetails({
-              ...bankNameDetails,
-              bankNameInputFilled: true,
-            });
           } else {
             setBankNameDetails({
-              ...bankNameDetails,
+              bankNameValidation: false,
               bankNameInputFilled: false,
             });
           }
@@ -154,22 +150,18 @@ export default function BankInfo() {
               regex.test(value)
             ) {
               setBankAccountNumberDetails({
-                ...bankAccountNumberDetails,
+                bankAccountNumberInputFilled: true,
                 bankAccountNumberValidation: true,
               });
             } else {
               setBankAccountNumberDetails({
-                ...bankAccountNumberDetails,
+                bankAccountNumberInputFilled: true,
                 bankAccountNumberValidation: false,
               });
             }
-            setBankAccountNumberDetails({
-              ...bankAccountNumberDetails,
-              bankAccountNumberInputFilled: true,
-            });
           } else {
             setBankAccountNumberDetails({
-              ...bankAccountNumberDetails,
+              bankAccountNumberValidation: false,
               bankAccountNumberInputFilled: false,
             });
           }
@@ -182,22 +174,18 @@ export default function BankInfo() {
               regex.test(value)
             ) {
               setBranchNameDetails({
-                ...branchNameDetails,
+                branchNameInputFilled: true,
                 branchNameValidation: true,
               });
             } else {
               setBranchNameDetails({
-                ...branchNameDetails,
+                branchNameInputFilled: true,
                 branchNameValidation: false,
               });
             }
-            setBranchNameDetails({
-              ...branchNameDetails,
-              branchNameInputFilled: false,
-            });
           } else {
             setBranchNameDetails({
-              ...branchNameDetails,
+              branchNameValidation: false,
               branchNameInputFilled: true,
             });
           }
@@ -210,22 +198,18 @@ export default function BankInfo() {
               regex.test(value)
             ) {
               setBranchAddressDetails({
-                ...branchAddressDetails,
+                branchAddressInputFilled: true,
                 branchAddressValidation: true,
               });
             } else {
               setBranchAddressDetails({
-                ...branchAddressDetails,
+                branchAddressInputFilled: true,
                 branchAddressValidation: false,
               });
             }
-            setBranchAddressDetails({
-              ...branchAddressDetails,
-              branchAddressInputFilled: false,
-            });
           } else {
             setBranchAddressDetails({
-              ...branchAddressDetails,
+              branchAddressValidation: false,
               branchAddressInputFilled: true,
             });
           }
@@ -269,6 +253,27 @@ export default function BankInfo() {
   const onClick = () => {
     setSelected(!selected);
   };
+
+  useEffect(() => {
+    const validations = [
+      accountHolderNameDetails.accountHolderNameValidation,
+      bankNameDetails.bankNameValidation,
+      bankAccountNumberDetails.bankAccountNumberValidation,
+      branchNameDetails.branchNameValidation,
+      branchAddressDetails.branchAddressValidation,
+    ];
+
+    const allFieldsValid = validations.every((v) => v === true);
+    console.log("validations", validations);
+    setIsBankInfoValid(allFieldsValid);
+  }, [
+    accountHolderNameDetails,
+    bankNameDetails,
+    bankAccountNumberDetails,
+    branchNameDetails,
+    branchAddressDetails,
+  ]);
+
   return (
     <div>
       <h1 className="text-3xl font-bold">Add New Payout Account</h1>
@@ -300,7 +305,10 @@ export default function BankInfo() {
               300
             )}
           />
-          {!thirdValidationState.AccountHolderName &&
+          {thirdValidationState.AccountHolderName && (
+            <h4 className="text-green-700 pl-3">输入有效</h4>
+          )}
+          {!accountHolderNameDetails.accountHolderNameValidation &&
             accountHolderNameDetails.accountHolderNameInputFilled && (
               <h4 className="text-red-700 pl-3">请正确输入2~50长度的字符串</h4>
             )}
@@ -324,7 +332,7 @@ export default function BankInfo() {
               300
             )}
           />
-          {!thirdValidationState.BankName &&
+          {!bankNameDetails.bankNameValidation &&
             bankNameDetails.bankNameInputFilled && (
               <h4 className="text-red-700 pl-3">请正确输入</h4>
             )}
@@ -348,7 +356,7 @@ export default function BankInfo() {
               300
             )}
           />
-          {!thirdValidationState.BankAccountNumber &&
+          {!bankAccountNumberDetails.bankAccountNumberValidation &&
             bankAccountNumberDetails.bankAccountNumberInputFilled && (
               <h4 className="text-red-700 pl-3">请正确输入</h4>
             )}
@@ -370,7 +378,7 @@ export default function BankInfo() {
               300
             )}
           />
-          {!thirdValidationState.BranchName &&
+          {!branchNameDetails.branchNameValidation &&
             branchNameDetails.branchNameInputFilled && (
               <h4 className="text-red-700 pl-3">请正确输入</h4>
             )}
@@ -392,7 +400,7 @@ export default function BankInfo() {
               300
             )}
           />
-          {!thirdValidationState.BranchAddress &&
+          {!branchAddressDetails.branchAddressValidation &&
             branchAddressDetails.branchAddressInputFilled && (
               <h4 className="text-red-700 pl-3">请正确输入</h4>
             )}

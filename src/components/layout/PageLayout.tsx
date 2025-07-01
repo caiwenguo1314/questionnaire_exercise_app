@@ -23,6 +23,7 @@ export default function PageLayout() {
   const [selectedUserIndex, setSelectedUserIndex] = useState<number | null>(
     null
   );
+  const [isBankInfoValid, setIsBankInfoValid] = useState(false);
 
   const stepContents = [
     <PolicySelect
@@ -30,7 +31,7 @@ export default function PageLayout() {
       setSelectedUserIndex={setSelectedUserIndex}
     />,
     <QuestionnaireForm />,
-    <BankInfo />,
+    <BankInfo setIsBankInfoValid={setIsBankInfoValid} />,
     <Review />,
   ];
 
@@ -42,16 +43,18 @@ export default function PageLayout() {
         shouldDisable = selectedUserIndex === null;
         break;
       case 1:
-      case 2:
-      case 3:
         shouldDisable = false;
         break;
-      default:
+      case 2:
+        shouldDisable = !isBankInfoValid;
+        break;
+      case 3:
         shouldDisable = true;
+        break;
     }
 
     setBtnDisabled(shouldDisable);
-  }, [selectedUserIndex, currentStep]);
+  }, [selectedUserIndex, currentStep, isBankInfoValid]);
 
   return (
     <div className="min-h-screen flex flex-col overflow-hidden">
@@ -103,7 +106,7 @@ export default function PageLayout() {
           </span>
         </div> */}
 
-        <div className="fixed bottom-4 right-4 flex gap-2">
+        <div className="fixed bottom-4 right-4 flex gap-6">
           <BackButton
             label="Back"
             currentStep={currentStep}
