@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { AssuredPerson } from "types/form";
 
 export default function Review() {
@@ -6,13 +6,13 @@ export default function Review() {
     /* useState这里要明确接受参数的类型 */
     useState<AssuredPerson | null>(null);
 
-  const [inputValue, setInputValue] = useState({
-    AccountHolderName: "",
-    BankName: "",
-    BankAccountNumber: "",
-    BranchName: "",
-    BranchAddress: "",
-  });
+
+
+  const accountHolderNameValue = sessionStorage.getItem("accountHolderNameValue");
+  const bankNameValue = sessionStorage.getItem("bankNameValue");
+  const bankAccountNumberValue = sessionStorage.getItem("bankAccountNumberValue");
+  const branchNameValue = sessionStorage.getItem("branchNameValue");
+  const branchAddressValue = sessionStorage.getItem("branchAddressValue");
 
   return (
     <div>
@@ -38,7 +38,7 @@ export default function Review() {
             Account holder's name<span className="text-red-700">*</span>
           </h4>
           <div>
-            <span className="pl-3">{inputValue.AccountHolderName}</span>
+            <span className="pl-3">{accountHolderNameValue}</span>
           </div>
         </div>
       </div>
@@ -48,7 +48,7 @@ export default function Review() {
             Bank name<span className="text-red-700">*</span>
           </h4>
           <div>
-            <span className="pl-3">{inputValue.BankName}</span>
+            <span className="pl-3">{bankNameValue}</span>
           </div>
         </div>
       </div>
@@ -58,7 +58,7 @@ export default function Review() {
             Bank account number<span className="text-red-700">*</span>
           </h4>
           <div>
-            <span className="pl-3">{inputValue.BankAccountNumber}</span>
+            <span className="pl-3">{bankAccountNumberValue}</span>
           </div>
         </div>
       </div>
@@ -68,7 +68,7 @@ export default function Review() {
             Branch name<span className="text-red-700">*</span>
           </h4>
           <div>
-            <span className="pl-3">{inputValue.BranchName}</span>
+            <span className="pl-3">{branchNameValue}</span>
           </div>
         </div>
       </div>
@@ -78,7 +78,7 @@ export default function Review() {
             Branch address<span className="text-red-700">*</span>
           </h4>
           <div>
-            <span className="pl-3">{inputValue.BranchAddress}</span>
+            <span className="pl-3">{branchAddressValue}</span>
           </div>
         </div>
       </div>
