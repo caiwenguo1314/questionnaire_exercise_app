@@ -12,11 +12,7 @@ const BackButton = ({
   return (
     <Button
       className="w-32"
-      type="primary"
-      // htmlType="button"
       shape="round"
-      // icon={<LeftOutlined />}
-      // size="large"
       size="large"
       onClick={
         currentStep >= 1 ? () => setCurrentStep(currentStep - 1) : onBack
