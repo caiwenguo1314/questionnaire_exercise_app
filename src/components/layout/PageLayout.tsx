@@ -1,5 +1,4 @@
 import { SettingOutlined } from "@ant-design/icons";
-import FootButton from "components/ui/footButton";
 // import StepProgress from "components/ui/stepProgress";
 // import { Outlet, useLocation } from "react-router-dom";
 // import useQuestionnaireContext from "hooks/useQuestionnaireContext";
@@ -54,12 +53,8 @@ export default function PageLayout() {
     }
 
     setBtnDisabled(shouldDisable);
-  }, [selectedUserIndex, currentStep, isBankInfoValid]);
-<<<<<<< HEAD
-=======
- 
+  }, [selectedUserIndex, currentStep, isBankInfoValid]); 
 
->>>>>>> 3f403fe50becb613cb8cd4c0b036d69658abe862
 
   return (
     <div className="min-h-screen flex flex-col overflow-hidden">
