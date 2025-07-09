@@ -11,52 +11,48 @@ export default function BankInfo({
     "w-10/12 border border-gray-900 rounded-2xl ml-2 pl-2 h-8 bg-gray-100";
 
   //定义状态
-  const [accountHolderNameDetails, setAccountHolderNameDetails] = useState<{
-    accountHolderNameValidation: boolean | null;
-    accountHolderNameInputFilled: boolean | null;
-  }>({
-    accountHolderNameValidation: null,
-    accountHolderNameInputFilled: null,
+  interface inputValueState {
+    inputValue: string;
+    inputValidation: boolean | null;
+    inputFilled: boolean | null;
+  }
+  interface BankInfoStates {
+    accountHolderNameDetails: inputValueState;
+    bankNameDetails: inputValueState;
+    bankAccountNumberDetails: inputValueState;
+    branchNameDetails: inputValueState;
+    branchAddressDetails: inputValueState;
+  }
+  const [bankInfoDetails, setBankInfoDetails] = useState<BankInfoStates>({
+    accountHolderNameDetails: {
+      inputValue: "",
+      inputValidation: null,
+      inputFilled: null,
+    },
+    bankNameDetails: {
+      inputValue: "",
+      inputValidation: null,
+      inputFilled: null,
+    },
+    bankAccountNumberDetails: {
+      inputValue: "",
+      inputValidation: null,
+      inputFilled: null,
+    },
+    branchNameDetails: {
+      inputValue: "",
+      inputValidation: null,
+      inputFilled: null,
+    },
+    branchAddressDetails: {
+      inputValue: "",
+      inputValidation: null,
+      inputFilled: null,
+    },
   });
 
-  const [bankNameDetails, setBankNameDetails] = useState<{
-    bankNameValidation: boolean | null;
-    bankNameInputFilled: boolean | null;
-  }>({
-    bankNameValidation: null,
-    bankNameInputFilled: null,
-  });
-  const [bankAccountNumberDetails, setBankAccountNumberDetails] = useState<{
-    bankAccountNumberValidation: boolean | null;
-    bankAccountNumberInputFilled: boolean | null;
-  }>({
-    bankAccountNumberValidation: null,
-    bankAccountNumberInputFilled: null,
-  });
-
-  const [branchNameDetails, setBranchNameDetails] = useState<{
-    branchNameValidation: boolean | null;
-    branchNameInputFilled: boolean | null;
-  }>({
-    branchNameValidation: null,
-    branchNameInputFilled: null,
-  });
-
-  const [branchAddressDetails, setBranchAddressDetails] = useState<{
-    branchAddressValidation: boolean | null;
-    branchAddressInputFilled: boolean | null;
-  }>({
-    branchAddressValidation: null,
-    branchAddressInputFilled: null,
-  });
   const [selected, setSelected] = useState(false);
-  const [accountHolderNameInputValue, setAccountHolderNameInputValue] =
-    useState("");
-  const [bankNameInputValue, setBankNameInputValue] = useState("");
-  const [bankAccountNumberInputValue, setBankAccountNumberInputValue] =
-    useState("");
-  const [branchNameInputValue, setBranchNameInputValue] = useState("");
-  const [branchAddressInputValue, setBranchAddressInputValue] = useState("");
+
   //定义函数
   const debounceFunction = <T extends (...args: any[]) => void>(
     fn: T,
@@ -70,319 +66,364 @@ export default function BankInfo({
       }, delay);
     };
   };
-  const validateInputEvent = (
-    minlength: number,
-    maxlength: number,
-    regex: RegExp
-  ) => {
-    return (value: string, name: string) => {
-      switch (name) {
-        case "AccountHolderName":
-          if (value.length > 0) {
-            if (
-              value.length >= minlength &&
-              value.length <= maxlength &&
-              regex.test(value)
-            ) {
-              setAccountHolderNameDetails({
-                accountHolderNameInputFilled: true,
-                accountHolderNameValidation: true,
-              });
-              // 存储前对value进行JSON格式化处理
-              sessionStorage.setItem(
-                "accountHolderName",
-                JSON.stringify(value)
-              );
-            } else {
-              setAccountHolderNameDetails({
-                accountHolderNameInputFilled: true,
-                accountHolderNameValidation: false,
-              });
-              sessionStorage.removeItem("accountHolderName");
-            }
-          } else {
-            setAccountHolderNameDetails({
-              accountHolderNameValidation: false,
-              accountHolderNameInputFilled: false,
-            });
-            sessionStorage.removeItem("accountHolderName");
-          }
-          break;
-        case "BankName":
-          if (value.length > 0) {
-            if (
-              value.length >= minlength &&
-              value.length <= maxlength &&
-              regex.test(value)
-            ) {
-              setBankNameDetails({
-                bankNameInputFilled: true,
-                bankNameValidation: true,
-              });
-              // 存储前对value进行JSON格式化处理
-              sessionStorage.setItem("bankName", JSON.stringify(value));
-            } else {
-              setBankNameDetails({
-                bankNameInputFilled: true,
-                bankNameValidation: false,
-              });
-              sessionStorage.removeItem("bankName");
-            }
-          } else {
-            setBankNameDetails({
-              bankNameValidation: false,
-              bankNameInputFilled: false,
-            });
-            sessionStorage.removeItem("bankName");
-          }
-          break;
-        case "BankAccountNumber":
-          if (value.length > 0) {
-            if (
-              value.length >= minlength &&
-              value.length <= maxlength &&
-              regex.test(value)
-            ) {
-              setBankAccountNumberDetails({
-                bankAccountNumberInputFilled: true,
-                bankAccountNumberValidation: true,
-              });
-              // 存储前对value进行JSON格式化处理
-              sessionStorage.setItem(
-                "bankAccountNumber",
-                JSON.stringify(value)
-              );
-            } else {
-              setBankAccountNumberDetails({
-                bankAccountNumberInputFilled: true,
-                bankAccountNumberValidation: false,
-              });
-              sessionStorage.removeItem("bankAccountNumber");
-            }
-          } else {
-            setBankAccountNumberDetails({
-              bankAccountNumberValidation: false,
-              bankAccountNumberInputFilled: false,
-            });
-            sessionStorage.removeItem("bankAccountNumber");
-          }
-          break;
-        case "BranchName":
-          if (value.length > 0) {
-            if (
-              value.length >= minlength &&
-              value.length <= maxlength &&
-              regex.test(value)
-            ) {
-              setBranchNameDetails({
-                branchNameInputFilled: true,
-                branchNameValidation: true,
-              });
-              sessionStorage.setItem("branchName", JSON.stringify(value));
-            } else {
-              setBranchNameDetails({
-                branchNameInputFilled: true,
-                branchNameValidation: false,
-              });
-              sessionStorage.removeItem("branchName");
-            }
-          } else {
-            setBranchNameDetails({
-              branchNameValidation: false,
-              branchNameInputFilled: true,
-            });
-            sessionStorage.removeItem("branchName");
-          }
-          break;
-        case "BranchAddress":
-          if (value.length > 0) {
-            if (
-              value.length >= minlength &&
-              value.length <= maxlength &&
-              regex.test(value)
-            ) {
-              setBranchAddressDetails({
-                branchAddressInputFilled: true,
-                branchAddressValidation: true,
-              });
-              sessionStorage.setItem("branchAddress", JSON.stringify(value));
-            } else {
-              setBranchAddressDetails({
-                branchAddressInputFilled: true,
-                branchAddressValidation: false,
-              });
-              sessionStorage.removeItem("branchAddress");
-            }
-          } else {
-            setBranchAddressDetails({
-              branchAddressValidation: false,
-              branchAddressInputFilled: true,
-            });
-            sessionStorage.removeItem("branchAddress");
-          }
+  const validateInputEvent = (value: string, name: keyof BankInfoStates) => {
+    if (value.length > 0) {
+      setBankInfoDetails((prev) => {
+        return {
+          ...prev,
+          [name]: {
+            ...prev[name],
+            inputFilled: true,
+          },
+        };
+      });
+      if (
+        value.length > inputValidationConfig[name].minLength &&
+        value.length < inputValidationConfig[name].maxLength &&
+        inputValidationConfig[name].regex.test(value)
+      ) {
+        setBankInfoDetails((prev) => {
+          return {
+            ...prev,
+            [name]: {
+              ...prev[name],
+              inputValue: value,
+              inputValidation: true,
+              inputFilled: true,
+            },
+          };
+        });
+        sessionStorage.setItem(name, JSON.stringify(value));
       }
-    };
+    } else {
+      setBankInfoDetails((prev) => {
+        return {
+          ...prev,
+          [name]: {
+            ...prev[name],
+            inputValue: value,
+            inputValidation: false,
+            inputFilled: true,
+          },
+        };
+      });
+      sessionStorage.removeItem(name);
+    }
   };
+  const handleBankInfoOnChange = () => {};
+  // const validateInputEvent = (
+  //   minlength: number,
+  //   maxlength: number,
+  //   regex: RegExp
+  // ) => {
+  //   return (value: string, name: string) => {
+  //     switch (name) {
+  //       case "AccountHolderName":
+  //         if (value.length > 0) {
+  //           if (
+  //             value.length >= minlength &&
+  //             value.length <= maxlength &&
+  //             regex.test(value)
+  //           ) {
+  //             setAccountHolderNameDetails({
+  //               accountHolderNameInputFilled: true,
+  //               accountHolderNameValidation: true,
+  //             });
+  //             // 存储前对value进行JSON格式化处理
+  //             sessionStorage.setItem(
+  //               "accountHolderName",
+  //               JSON.stringify(value)
+  //             );
+  //           } else {
+  //             setAccountHolderNameDetails({
+  //               accountHolderNameInputFilled: true,
+  //               accountHolderNameValidation: false,
+  //             });
+  //             sessionStorage.removeItem("accountHolderName");
+  //           }
+  //         } else {
+  //           setAccountHolderNameDetails({
+  //             accountHolderNameValidation: false,
+  //             accountHolderNameInputFilled: false,
+  //           });
+  //           sessionStorage.removeItem("accountHolderName");
+  //         }
+  //         break;
+  //       case "BankName":
+  //         if (value.length > 0) {
+  //           if (
+  //             value.length >= minlength &&
+  //             value.length <= maxlength &&
+  //             regex.test(value)
+  //           ) {
+  //             setBankNameDetails({
+  //               bankNameInputFilled: true,
+  //               bankNameValidation: true,
+  //             });
+  //             // 存储前对value进行JSON格式化处理
+  //             sessionStorage.setItem("bankName", JSON.stringify(value));
+  //           } else {
+  //             setBankNameDetails({
+  //               bankNameInputFilled: true,
+  //               bankNameValidation: false,
+  //             });
+  //             sessionStorage.removeItem("bankName");
+  //           }
+  //         } else {
+  //           setBankNameDetails({
+  //             bankNameValidation: false,
+  //             bankNameInputFilled: false,
+  //           });
+  //           sessionStorage.removeItem("bankName");
+  //         }
+  //         break;
+  //       case "BankAccountNumber":
+  //         if (value.length > 0) {
+  //           if (
+  //             value.length >= minlength &&
+  //             value.length <= maxlength &&
+  //             regex.test(value)
+  //           ) {
+  //             setBankAccountNumberDetails({
+  //               bankAccountNumberInputFilled: true,
+  //               bankAccountNumberValidation: true,
+  //             });
+  //             // 存储前对value进行JSON格式化处理
+  //             sessionStorage.setItem(
+  //               "bankAccountNumber",
+  //               JSON.stringify(value)
+  //             );
+  //           } else {
+  //             setBankAccountNumberDetails({
+  //               bankAccountNumberInputFilled: true,
+  //               bankAccountNumberValidation: false,
+  //             });
+  //             sessionStorage.removeItem("bankAccountNumber");
+  //           }
+  //         } else {
+  //           setBankAccountNumberDetails({
+  //             bankAccountNumberValidation: false,
+  //             bankAccountNumberInputFilled: false,
+  //           });
+  //           sessionStorage.removeItem("bankAccountNumber");
+  //         }
+  //         break;
+  //       case "BranchName":
+  //         if (value.length > 0) {
+  //           if (
+  //             value.length >= minlength &&
+  //             value.length <= maxlength &&
+  //             regex.test(value)
+  //           ) {
+  //             setBranchNameDetails({
+  //               branchNameInputFilled: true,
+  //               branchNameValidation: true,
+  //             });
+  //             sessionStorage.setItem("branchName", JSON.stringify(value));
+  //           } else {
+  //             setBranchNameDetails({
+  //               branchNameInputFilled: true,
+  //               branchNameValidation: false,
+  //             });
+  //             sessionStorage.removeItem("branchName");
+  //           }
+  //         } else {
+  //           setBranchNameDetails({
+  //             branchNameValidation: false,
+  //             branchNameInputFilled: true,
+  //           });
+  //           sessionStorage.removeItem("branchName");
+  //         }
+  //         break;
+  //       case "BranchAddress":
+  //         if (value.length > 0) {
+  //           if (
+  //             value.length >= minlength &&
+  //             value.length <= maxlength &&
+  //             regex.test(value)
+  //           ) {
+  //             setBranchAddressDetails({
+  //               branchAddressInputFilled: true,
+  //               branchAddressValidation: true,
+  //             });
+  //             sessionStorage.setItem("branchAddress", JSON.stringify(value));
+  //           } else {
+  //             setBranchAddressDetails({
+  //               branchAddressInputFilled: true,
+  //               branchAddressValidation: false,
+  //             });
+  //             sessionStorage.removeItem("branchAddress");
+  //           }
+  //         } else {
+  //           setBranchAddressDetails({
+  //             branchAddressValidation: false,
+  //             branchAddressInputFilled: true,
+  //           });
+  //           sessionStorage.removeItem("branchAddress");
+  //         }
+  //     }
+  //   };
+  // };
 
   // 修改后：新增
-  const handleAccountHolderNameChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const value = e.target.value;
-    setAccountHolderNameInputValue(value); // 实时更新输入值
-    debounceFunction(
-      validateInputEvent(
-        inputValidationConfig.AccountHolderName.minLength,
-        inputValidationConfig.AccountHolderName.maxLength,
-        inputValidationConfig.AccountHolderName.regex
-      ),
-      150 // 降低延迟
-    )(value, "AccountHolderName");
-  };
-  // 新增
-  const handleBranchNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setBranchNameInputValue(value); // 实时更新输入值
-    debounceFunction(
-      validateInputEvent(
-        inputValidationConfig.BranchName.minLength,
-        inputValidationConfig.BranchName.maxLength,
-        inputValidationConfig.BranchName.regex
-      ),
-      150 // 降低延迟
-    )(value, "BranchName");
-  };
-  // 新增
-  const handleBranchAddressChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const value = e.target.value;
-    setBranchAddressInputValue(value); // 实时更新输入值
-    debounceFunction(
-      validateInputEvent(
-        inputValidationConfig.BranchAddress.minLength,
-        inputValidationConfig.BranchAddress.maxLength,
-        inputValidationConfig.BranchAddress.regex
-      ),
-      150 // 降低延迟
-    )(value, "BranchAddress");
-  };
-  // 新增
-  const handleBankAccountNumberChange = (
-    e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    const value = e.target.value;
-    setBankAccountNumberInputValue(value); // 实时更新输入值
-    debounceFunction(
-      validateInputEvent(
-        inputValidationConfig.BankAccountNumber.minLength,
-        inputValidationConfig.BankAccountNumber.maxLength,
-        inputValidationConfig.BankAccountNumber.regex
-      ),
-      150 // 降低延迟
-    )(value, "BankAccountNumber");
-  };
-  // 新增
-  const handleBankNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-    setBankNameInputValue(value); // 实时更新输入值
-    debounceFunction(
-      validateInputEvent(
-        inputValidationConfig.BankName.minLength,
-        inputValidationConfig.BankName.maxLength,
-        inputValidationConfig.BankName.regex
-      ),
-      150 // 降低延迟
-    )(value, "BankName");
-  };
+  // const handleAccountHolderNameChange = (
+  //   e: React.ChangeEvent<HTMLInputElement>
+  // ) => {
+  //   const value = e.target.value;
+  //   setAccountHolderNameInputValue(value); // 实时更新输入值
+  //   debounceFunction(
+  //     validateInputEvent(
+  //       inputValidationConfig.AccountHolderName.minLength,
+  //       inputValidationConfig.AccountHolderName.maxLength,
+  //       inputValidationConfig.AccountHolderName.regex
+  //     ),
+  //     150 // 降低延迟
+  //   )(value, "AccountHolderName");
+  // };
+  // // 新增
+  // const handleBranchNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const value = e.target.value;
+  //   setBranchNameInputValue(value); // 实时更新输入值
+  //   debounceFunction(
+  //     validateInputEvent(
+  //       inputValidationConfig.BranchName.minLength,
+  //       inputValidationConfig.BranchName.maxLength,
+  //       inputValidationConfig.BranchName.regex
+  //     ),
+  //     150 // 降低延迟
+  //   )(value, "BranchName");
+  // };
+  // // 新增
+  // const handleBranchAddressChange = (
+  //   e: React.ChangeEvent<HTMLInputElement>
+  // ) => {
+  //   const value = e.target.value;
+  //   setBranchAddressInputValue(value); // 实时更新输入值
+  //   debounceFunction(
+  //     validateInputEvent(
+  //       inputValidationConfig.BranchAddress.minLength,
+  //       inputValidationConfig.BranchAddress.maxLength,
+  //       inputValidationConfig.BranchAddress.regex
+  //     ),
+  //     150 // 降低延迟
+  //   )(value, "BranchAddress");
+  // };
+  // // 新增
+  // const handleBankAccountNumberChange = (
+  //   e: React.ChangeEvent<HTMLInputElement>
+  // ) => {
+  //   const value = e.target.value;
+  //   setBankAccountNumberInputValue(value); // 实时更新输入值
+  //   debounceFunction(
+  //     validateInputEvent(
+  //       inputValidationConfig.BankAccountNumber.minLength,
+  //       inputValidationConfig.BankAccountNumber.maxLength,
+  //       inputValidationConfig.BankAccountNumber.regex
+  //     ),
+  //     150 // 降低延迟
+  //   )(value, "BankAccountNumber");
+  // };
+  // // 新增
+  // const handleBankNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const value = e.target.value;
+  //   setBankNameInputValue(value); // 实时更新输入值
+  //   debounceFunction(
+  //     validateInputEvent(
+  //       inputValidationConfig.BankName.minLength,
+  //       inputValidationConfig.BankName.maxLength,
+  //       inputValidationConfig.BankName.regex
+  //     ),
+  //     150 // 降低延迟
+  //   )(value, "BankName");
+  // };
 
-  const onClick = () => {
-    setSelected(!selected);
-  };
-  useEffect(() => {
-    const validations = [
-      accountHolderNameDetails.accountHolderNameValidation,
-      bankNameDetails.bankNameValidation,
-      bankAccountNumberDetails.bankAccountNumberValidation,
-      branchNameDetails.branchNameValidation,
-      branchAddressDetails.branchAddressValidation,
-    ];
-    const allFieldsValid = validations.every((v) => v === true);    
-    setIsBankInfoValid(allFieldsValid&&selected);
-  }, [
-    accountHolderNameDetails,
-    bankNameDetails,
-    bankAccountNumberDetails,
-    branchNameDetails,
-    branchAddressDetails,
-    selected,
-    setIsBankInfoValid,
-  ]);
-  useEffect(() => {
-    const savedValue = sessionStorage.getItem("accountHolderName");
-    if (savedValue !== null) {
-      const value = JSON.parse(savedValue);
-      setAccountHolderNameInputValue(value);
-      // 触发初始验证
-      validateInputEvent(
-        inputValidationConfig.AccountHolderName.minLength,
-        inputValidationConfig.AccountHolderName.maxLength,
-        inputValidationConfig.AccountHolderName.regex
-      )(value, "AccountHolderName");
-    }
-  }, []);
-  useEffect(() => {
-    const savedValue = sessionStorage.getItem("bankName");
-    if (savedValue !== null) {
-      const value = JSON.parse(savedValue);
-      setBankNameInputValue(value);
-      // 触发初始验证
-      validateInputEvent(
-        inputValidationConfig.BankName.minLength,
-        inputValidationConfig.BankName.maxLength,
-        inputValidationConfig.BankName.regex
-      )(value, "BankName");
-    }
-  }, []);
-  useEffect(() => {
-    const savedValue = sessionStorage.getItem("bankAccountNumber");
-    if (savedValue !== null) {
-      const value = JSON.parse(savedValue);
-      setBankAccountNumberInputValue(value);
-      // 触发初始验证
-      validateInputEvent(
-        inputValidationConfig.BankAccountNumber.minLength,
-        inputValidationConfig.BankAccountNumber.maxLength,
-        inputValidationConfig.BankAccountNumber.regex
-      )(value, "BankAccountNumber");
-    }
-  }, []);
-  useEffect(() => {
-    const savedValue = sessionStorage.getItem("branchName");
-    if (savedValue !== null) {
-      const value = JSON.parse(savedValue);
-      setBranchNameInputValue(value);
-      // 触发初始验证
-      validateInputEvent(
-        inputValidationConfig.BranchName.minLength,
-        inputValidationConfig.BranchName.maxLength,
-        inputValidationConfig.BranchName.regex
-      )(value, "BranchName");
-    }
-  }, []);
-  useEffect(() => {
-    const savedValue = sessionStorage.getItem("branchAddress");
-    if (savedValue !== null) {
-      const value = JSON.parse(savedValue);
-      setBranchAddressInputValue(value);
-      // 触发初始验证
-      validateInputEvent(
-        inputValidationConfig.BranchAddress.minLength,
-        inputValidationConfig.BranchAddress.maxLength,
-        inputValidationConfig.BranchAddress.regex
-      )(value, "BranchAddress");
-    }
-  }, []);
+  // const onClick = () => {
+  //   setSelected(!selected);
+  // };
+  // useEffect(() => {
+  //   const validations = [
+  //     accountHolderNameDetails.accountHolderNameValidation,
+  //     bankNameDetails.bankNameValidation,
+  //     bankAccountNumberDetails.bankAccountNumberValidation,
+  //     branchNameDetails.branchNameValidation,
+  //     branchAddressDetails.branchAddressValidation,
+  //   ];
+  //   const allFieldsValid = validations.every((v) => v === true);
+  //   setIsBankInfoValid(allFieldsValid&&selected);
+  // }, [
+  //   accountHolderNameDetails,
+  //   bankNameDetails,
+  //   bankAccountNumberDetails,
+  //   branchNameDetails,
+  //   branchAddressDetails,
+  //   selected,
+  //   setIsBankInfoValid,
+  // ]);
+  // useEffect(() => {
+  //   const savedValue = sessionStorage.getItem("accountHolderName");
+  //   if (savedValue !== null) {
+  //     const value = JSON.parse(savedValue);
+  //     setAccountHolderNameInputValue(value);
+  //     // 触发初始验证
+  //     validateInputEvent(
+  //       inputValidationConfig.AccountHolderName.minLength,
+  //       inputValidationConfig.AccountHolderName.maxLength,
+  //       inputValidationConfig.AccountHolderName.regex
+  //     )(value, "AccountHolderName");
+  //   }
+  // }, []);
+  // useEffect(() => {
+  //   const savedValue = sessionStorage.getItem("bankName");
+  //   if (savedValue !== null) {
+  //     const value = JSON.parse(savedValue);
+  //     setBankNameInputValue(value);
+  //     // 触发初始验证
+  //     validateInputEvent(
+  //       inputValidationConfig.BankName.minLength,
+  //       inputValidationConfig.BankName.maxLength,
+  //       inputValidationConfig.BankName.regex
+  //     )(value, "BankName");
+  //   }
+  // }, []);
+  // useEffect(() => {
+  //   const savedValue = sessionStorage.getItem("bankAccountNumber");
+  //   if (savedValue !== null) {
+  //     const value = JSON.parse(savedValue);
+  //     setBankAccountNumberInputValue(value);
+  //     // 触发初始验证
+  //     validateInputEvent(
+  //       inputValidationConfig.BankAccountNumber.minLength,
+  //       inputValidationConfig.BankAccountNumber.maxLength,
+  //       inputValidationConfig.BankAccountNumber.regex
+  //     )(value, "BankAccountNumber");
+  //   }
+  // }, []);
+  // useEffect(() => {
+  //   const savedValue = sessionStorage.getItem("branchName");
+  //   if (savedValue !== null) {
+  //     const value = JSON.parse(savedValue);
+  //     setBranchNameInputValue(value);
+  //     // 触发初始验证
+  //     validateInputEvent(
+  //       inputValidationConfig.BranchName.minLength,
+  //       inputValidationConfig.BranchName.maxLength,
+  //       inputValidationConfig.BranchName.regex
+  //     )(value, "BranchName");
+  //   }
+  // }, []);
+  // useEffect(() => {
+  //   const savedValue = sessionStorage.getItem("branchAddress");
+  //   if (savedValue !== null) {
+  //     const value = JSON.parse(savedValue);
+  //     setBranchAddressInputValue(value);
+  //     // 触发初始验证
+  //     validateInputEvent(
+  //       inputValidationConfig.BranchAddress.minLength,
+  //       inputValidationConfig.BranchAddress.maxLength,
+  //       inputValidationConfig.BranchAddress.regex
+  //     )(value, "BranchAddress");
+  //   }
+  // }, []);
 
   //定义输入验证接口
   interface ValidationConfig {
@@ -392,27 +433,27 @@ export default function BankInfo({
   }
   //定义输入验证配置
   const inputValidationConfig: Record<string, ValidationConfig> = {
-    AccountHolderName: {
+    accountHolderName: {
       minLength: 2,
       maxLength: 50,
       regex: /^[\p{L}\s'-]+$/u,
     },
-    BankName: {
+    bankName: {
       minLength: 2,
       maxLength: 100,
       regex: /^[\p{L}\d\s()-]+$/u,
     },
-    BankAccountNumber: {
+    bankAccountNumber: {
       minLength: 8,
       maxLength: 34,
       regex: /^[\d\s-]+$/u,
     },
-    BranchName: {
+    branchName: {
       minLength: 2,
       maxLength: 100,
       regex: /^[\p{L}\d\s()-]+$/u,
     },
-    BranchAddress: {
+    branchAddress: {
       minLength: 5,
       maxLength: 200,
       regex: /^[\p{L}\d\s,.-]+$/u,
@@ -440,7 +481,7 @@ export default function BankInfo({
             placeholder="Enter bank account holder name"
             title="Account holder's name"
             className={`${inputStyle}`}
-            name="AccountHolderName"
+            name="accountHolderName"
             value={accountHolderNameInputValue}
             onChange={handleAccountHolderNameChange}
           />
@@ -458,7 +499,7 @@ export default function BankInfo({
             placeholder="Bank name"
             title="Bank name"
             className={`${inputStyle}`}
-            name="BankName"
+            name="bankName"
             value={bankNameInputValue}
             onChange={handleBankNameChange}
           />
@@ -476,7 +517,7 @@ export default function BankInfo({
             placeholder="Enter bank account number"
             title="Bank account number"
             className={`${inputStyle}`}
-            name="BankAccountNumber"
+            name="bankAccountNumber"
             value={bankAccountNumberInputValue}
             onChange={handleBankAccountNumberChange}
           />
@@ -492,7 +533,7 @@ export default function BankInfo({
             placeholder="Enter branch name"
             title="Branch name"
             className={`${inputStyle}`}
-            name="BranchName"
+            name="branchName"
             value={branchNameInputValue}
             onChange={handleBranchNameChange}
           />
@@ -508,7 +549,7 @@ export default function BankInfo({
             placeholder="Branch address"
             title="Branch address"
             className={`${inputStyle}`}
-            name="BranchAddress"
+            name="branchAddress"
             value={branchAddressInputValue}
             onChange={handleBranchAddressChange}
           />
