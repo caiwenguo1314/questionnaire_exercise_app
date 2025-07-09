@@ -8,11 +8,11 @@ export default function Review() {
 
 
 
-  const accountHolderNameValue = sessionStorage.getItem("accountHolderNameValue");
-  const bankNameValue = sessionStorage.getItem("bankNameValue");
-  const bankAccountNumberValue = sessionStorage.getItem("bankAccountNumberValue");
-  const branchNameValue = sessionStorage.getItem("branchNameValue");
-  const branchAddressValue = sessionStorage.getItem("branchAddressValue");
+  const accountHolderNameValue = sessionStorage.getItem("accountHolderName");
+  const bankNameValue = sessionStorage.getItem("bankName");
+  const bankAccountNumberValue = sessionStorage.getItem("bankAccountNumber");
+  const branchNameValue = sessionStorage.getItem("branchName");
+  const branchAddressValue = sessionStorage.getItem("branchAddress");
 
   return (
     <div>

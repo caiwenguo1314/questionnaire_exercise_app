@@ -1,5 +1,4 @@
 import { SettingOutlined } from "@ant-design/icons";
-import FootButton from "components/ui/footButton";
 // import StepProgress from "components/ui/stepProgress";
 // import { Outlet, useLocation } from "react-router-dom";
 // import useQuestionnaireContext from "hooks/useQuestionnaireContext";
@@ -54,8 +53,7 @@ export default function PageLayout() {
     }
 
     setBtnDisabled(shouldDisable);
-  }, [selectedUserIndex, currentStep, isBankInfoValid]);
- 
+  }, [selectedUserIndex, currentStep, isBankInfoValid]); 
 
 
   return (
