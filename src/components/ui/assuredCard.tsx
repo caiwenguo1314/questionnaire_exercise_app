@@ -17,34 +17,57 @@ export default function AssuredCard({
   };
 
   return (
-    <div>
+    <div className="space-y-4">
       {assuredCardData.map((item, index) => (
         <div
           key={index}
-          className="w-full h-32 bg-white border-none rounded-3xl mt-4 shadow-md"
+          className={`w-full bg-white border-2 rounded-lg p-6 shadow-sm transition-all duration-200 cursor-pointer hover:shadow-md ${
+            selectedUserIndex === index 
+              ? "border-blue-500 bg-blue-50" 
+              : "border-gray-200 hover:border-gray-300"
+          }`}
+          onClick={onChooseUser(index)}
         >
-          <div
-            className={`w-5 h-5 border rounded-full relative top-3 left-5 select-none ${
-              selectedUserIndex === index ? "bg-blue-500" : " border-gray-600"
-            } flex justify-center items-center shadow-lg `}
-            onClick={onChooseUser(index)}
-          >
-            <div
-              className={`w-2 h-2  rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 "bg-white" ${
-                selectedUserIndex === index ? "bg-white" : "border-none"
-              }`}
-            ></div>
-          </div>
-          <div className="relative left-14 -top-4 font-bold text-2xl">
-            {item.name}
-          </div>
-          <div className="flex relative left-10 top-6 gap-8">
-            {item.insurance.map((item, index) => (
-              <div key={index}>
-                <div>{item.insurancePiece}</div>
-                <div>{item.insuranceNumber}</div>
+          <div className="flex items-start space-x-4">
+            {/* Radio Button */}
+            <div className="flex-shrink-0 mt-1">
+              <div
+                className={`w-5 h-5 border-2 rounded-full flex items-center justify-center transition-all duration-200 ${
+                  selectedUserIndex === index 
+                    ? "bg-blue-600 border-blue-600" 
+                    : "border-gray-300 bg-white hover:border-gray-400"
+                }`}
+              >
+                {selectedUserIndex === index && (
+                  <div className="w-2 h-2 bg-white rounded-full"></div>
+                )}
               </div>
-            ))}
+            </div>
+
+            {/* Content */}
+            <div className="flex-1 min-w-0">
+              {/* Name */}
+              <h3 className="text-lg font-semibold text-gray-800 mb-3">
+                {item.name}
+              </h3>
+              
+              {/* Insurance Policies */}
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {item.insurance.map((insurance, insuranceIndex) => (
+                  <div 
+                    key={insuranceIndex}
+                    className="bg-gray-50 rounded-md p-3 border border-gray-200"
+                  >
+                    <div className="text-sm font-medium text-gray-700 mb-1">
+                      {insurance.insurancePiece}
+                    </div>
+                    <div className="text-xs text-gray-500 font-mono">
+                      {insurance.insuranceNumber}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
       ))}

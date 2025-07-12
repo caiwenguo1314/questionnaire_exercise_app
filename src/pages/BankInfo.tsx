@@ -1,16 +1,28 @@
-import React, { useEffect, useState } from "react";
 import UploadCard from "components/ui/uploadCard";
+import React, { useCallback, useEffect, useMemo, useState } from "react";
 
 export default function BankInfo({
   setIsBankInfoValid,
+  selectedUserIndex,
 }: {
   setIsBankInfoValid: (isValid: boolean) => void;
+  selectedUserIndex: number | null;
 }) {
   //定义输入框样式
-  const inputStyle =
-    "w-10/12 border border-gray-900 rounded-2xl ml-2 pl-2 h-8 bg-gray-100";
+  const getInputStyle = (isValid: boolean | null, isFilled: boolean | null) => {
+    const baseStyle =
+      "w-full px-3 py-2.5 border-2 rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm";
 
-  //定义状态
+    if (isFilled && isValid === false) {
+      return `${baseStyle} border-red-400 bg-red-50 focus:ring-red-500`;
+    } else if (isFilled && isValid === true) {
+      return `${baseStyle} border-green-400 bg-green-50 focus:ring-green-500`;
+    } else {
+      return `${baseStyle} border-gray-300 bg-white hover:border-gray-400`;
+    }
+  };
+
+  //定义接口
   interface inputValueState {
     inputValue: string;
     inputValidation: boolean | null;
@@ -66,518 +78,351 @@ export default function BankInfo({
       }, delay);
     };
   };
-  const validateInputEvent = (value: string, name: keyof BankInfoStates) => {
-    if (value.length > 0) {
-      setBankInfoDetails((prev) => {
-        return {
-          ...prev,
-          [name]: {
-            ...prev[name],
-            inputFilled: true,
-          },
-        };
-      });
-      if (
-        value.length > inputValidationConfig[name].minLength &&
-        value.length < inputValidationConfig[name].maxLength &&
-        inputValidationConfig[name].regex.test(value)
-      ) {
-        setBankInfoDetails((prev) => {
-          return {
-            ...prev,
-            [name]: {
-              ...prev[name],
-              inputValue: value,
-              inputValidation: true,
-              inputFilled: true,
-            },
-          };
-        });
-        sessionStorage.setItem(name, JSON.stringify(value));
-      }
-    } else {
-      setBankInfoDetails((prev) => {
-        return {
-          ...prev,
-          [name]: {
-            ...prev[name],
-            inputValue: value,
-            inputValidation: false,
-            inputFilled: true,
-          },
-        };
-      });
-      sessionStorage.removeItem(name);
-    }
-  };
-  const handleBankInfoOnChange = () => {};
-  // const validateInputEvent = (
-  //   minlength: number,
-  //   maxlength: number,
-  //   regex: RegExp
-  // ) => {
-  //   return (value: string, name: string) => {
-  //     switch (name) {
-  //       case "AccountHolderName":
-  //         if (value.length > 0) {
-  //           if (
-  //             value.length >= minlength &&
-  //             value.length <= maxlength &&
-  //             regex.test(value)
-  //           ) {
-  //             setAccountHolderNameDetails({
-  //               accountHolderNameInputFilled: true,
-  //               accountHolderNameValidation: true,
-  //             });
-  //             // 存储前对value进行JSON格式化处理
-  //             sessionStorage.setItem(
-  //               "accountHolderName",
-  //               JSON.stringify(value)
-  //             );
-  //           } else {
-  //             setAccountHolderNameDetails({
-  //               accountHolderNameInputFilled: true,
-  //               accountHolderNameValidation: false,
-  //             });
-  //             sessionStorage.removeItem("accountHolderName");
-  //           }
-  //         } else {
-  //           setAccountHolderNameDetails({
-  //             accountHolderNameValidation: false,
-  //             accountHolderNameInputFilled: false,
-  //           });
-  //           sessionStorage.removeItem("accountHolderName");
-  //         }
-  //         break;
-  //       case "BankName":
-  //         if (value.length > 0) {
-  //           if (
-  //             value.length >= minlength &&
-  //             value.length <= maxlength &&
-  //             regex.test(value)
-  //           ) {
-  //             setBankNameDetails({
-  //               bankNameInputFilled: true,
-  //               bankNameValidation: true,
-  //             });
-  //             // 存储前对value进行JSON格式化处理
-  //             sessionStorage.setItem("bankName", JSON.stringify(value));
-  //           } else {
-  //             setBankNameDetails({
-  //               bankNameInputFilled: true,
-  //               bankNameValidation: false,
-  //             });
-  //             sessionStorage.removeItem("bankName");
-  //           }
-  //         } else {
-  //           setBankNameDetails({
-  //             bankNameValidation: false,
-  //             bankNameInputFilled: false,
-  //           });
-  //           sessionStorage.removeItem("bankName");
-  //         }
-  //         break;
-  //       case "BankAccountNumber":
-  //         if (value.length > 0) {
-  //           if (
-  //             value.length >= minlength &&
-  //             value.length <= maxlength &&
-  //             regex.test(value)
-  //           ) {
-  //             setBankAccountNumberDetails({
-  //               bankAccountNumberInputFilled: true,
-  //               bankAccountNumberValidation: true,
-  //             });
-  //             // 存储前对value进行JSON格式化处理
-  //             sessionStorage.setItem(
-  //               "bankAccountNumber",
-  //               JSON.stringify(value)
-  //             );
-  //           } else {
-  //             setBankAccountNumberDetails({
-  //               bankAccountNumberInputFilled: true,
-  //               bankAccountNumberValidation: false,
-  //             });
-  //             sessionStorage.removeItem("bankAccountNumber");
-  //           }
-  //         } else {
-  //           setBankAccountNumberDetails({
-  //             bankAccountNumberValidation: false,
-  //             bankAccountNumberInputFilled: false,
-  //           });
-  //           sessionStorage.removeItem("bankAccountNumber");
-  //         }
-  //         break;
-  //       case "BranchName":
-  //         if (value.length > 0) {
-  //           if (
-  //             value.length >= minlength &&
-  //             value.length <= maxlength &&
-  //             regex.test(value)
-  //           ) {
-  //             setBranchNameDetails({
-  //               branchNameInputFilled: true,
-  //               branchNameValidation: true,
-  //             });
-  //             sessionStorage.setItem("branchName", JSON.stringify(value));
-  //           } else {
-  //             setBranchNameDetails({
-  //               branchNameInputFilled: true,
-  //               branchNameValidation: false,
-  //             });
-  //             sessionStorage.removeItem("branchName");
-  //           }
-  //         } else {
-  //           setBranchNameDetails({
-  //             branchNameValidation: false,
-  //             branchNameInputFilled: true,
-  //           });
-  //           sessionStorage.removeItem("branchName");
-  //         }
-  //         break;
-  //       case "BranchAddress":
-  //         if (value.length > 0) {
-  //           if (
-  //             value.length >= minlength &&
-  //             value.length <= maxlength &&
-  //             regex.test(value)
-  //           ) {
-  //             setBranchAddressDetails({
-  //               branchAddressInputFilled: true,
-  //               branchAddressValidation: true,
-  //             });
-  //             sessionStorage.setItem("branchAddress", JSON.stringify(value));
-  //           } else {
-  //             setBranchAddressDetails({
-  //               branchAddressInputFilled: true,
-  //               branchAddressValidation: false,
-  //             });
-  //             sessionStorage.removeItem("branchAddress");
-  //           }
-  //         } else {
-  //           setBranchAddressDetails({
-  //             branchAddressValidation: false,
-  //             branchAddressInputFilled: true,
-  //           });
-  //           sessionStorage.removeItem("branchAddress");
-  //         }
-  //     }
-  //   };
-  // };
-
-  // 修改后：新增
-  // const handleAccountHolderNameChange = (
-  //   e: React.ChangeEvent<HTMLInputElement>
-  // ) => {
-  //   const value = e.target.value;
-  //   setAccountHolderNameInputValue(value); // 实时更新输入值
-  //   debounceFunction(
-  //     validateInputEvent(
-  //       inputValidationConfig.AccountHolderName.minLength,
-  //       inputValidationConfig.AccountHolderName.maxLength,
-  //       inputValidationConfig.AccountHolderName.regex
-  //     ),
-  //     150 // 降低延迟
-  //   )(value, "AccountHolderName");
-  // };
-  // // 新增
-  // const handleBranchNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const value = e.target.value;
-  //   setBranchNameInputValue(value); // 实时更新输入值
-  //   debounceFunction(
-  //     validateInputEvent(
-  //       inputValidationConfig.BranchName.minLength,
-  //       inputValidationConfig.BranchName.maxLength,
-  //       inputValidationConfig.BranchName.regex
-  //     ),
-  //     150 // 降低延迟
-  //   )(value, "BranchName");
-  // };
-  // // 新增
-  // const handleBranchAddressChange = (
-  //   e: React.ChangeEvent<HTMLInputElement>
-  // ) => {
-  //   const value = e.target.value;
-  //   setBranchAddressInputValue(value); // 实时更新输入值
-  //   debounceFunction(
-  //     validateInputEvent(
-  //       inputValidationConfig.BranchAddress.minLength,
-  //       inputValidationConfig.BranchAddress.maxLength,
-  //       inputValidationConfig.BranchAddress.regex
-  //     ),
-  //     150 // 降低延迟
-  //   )(value, "BranchAddress");
-  // };
-  // // 新增
-  // const handleBankAccountNumberChange = (
-  //   e: React.ChangeEvent<HTMLInputElement>
-  // ) => {
-  //   const value = e.target.value;
-  //   setBankAccountNumberInputValue(value); // 实时更新输入值
-  //   debounceFunction(
-  //     validateInputEvent(
-  //       inputValidationConfig.BankAccountNumber.minLength,
-  //       inputValidationConfig.BankAccountNumber.maxLength,
-  //       inputValidationConfig.BankAccountNumber.regex
-  //     ),
-  //     150 // 降低延迟
-  //   )(value, "BankAccountNumber");
-  // };
-  // // 新增
-  // const handleBankNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const value = e.target.value;
-  //   setBankNameInputValue(value); // 实时更新输入值
-  //   debounceFunction(
-  //     validateInputEvent(
-  //       inputValidationConfig.BankName.minLength,
-  //       inputValidationConfig.BankName.maxLength,
-  //       inputValidationConfig.BankName.regex
-  //     ),
-  //     150 // 降低延迟
-  //   )(value, "BankName");
-  // };
-
-  // const onClick = () => {
-  //   setSelected(!selected);
-  // };
-  // useEffect(() => {
-  //   const validations = [
-  //     accountHolderNameDetails.accountHolderNameValidation,
-  //     bankNameDetails.bankNameValidation,
-  //     bankAccountNumberDetails.bankAccountNumberValidation,
-  //     branchNameDetails.branchNameValidation,
-  //     branchAddressDetails.branchAddressValidation,
-  //   ];
-  //   const allFieldsValid = validations.every((v) => v === true);
-  //   setIsBankInfoValid(allFieldsValid&&selected);
-  // }, [
-  //   accountHolderNameDetails,
-  //   bankNameDetails,
-  //   bankAccountNumberDetails,
-  //   branchNameDetails,
-  //   branchAddressDetails,
-  //   selected,
-  //   setIsBankInfoValid,
-  // ]);
-  // useEffect(() => {
-  //   const savedValue = sessionStorage.getItem("accountHolderName");
-  //   if (savedValue !== null) {
-  //     const value = JSON.parse(savedValue);
-  //     setAccountHolderNameInputValue(value);
-  //     // 触发初始验证
-  //     validateInputEvent(
-  //       inputValidationConfig.AccountHolderName.minLength,
-  //       inputValidationConfig.AccountHolderName.maxLength,
-  //       inputValidationConfig.AccountHolderName.regex
-  //     )(value, "AccountHolderName");
-  //   }
-  // }, []);
-  // useEffect(() => {
-  //   const savedValue = sessionStorage.getItem("bankName");
-  //   if (savedValue !== null) {
-  //     const value = JSON.parse(savedValue);
-  //     setBankNameInputValue(value);
-  //     // 触发初始验证
-  //     validateInputEvent(
-  //       inputValidationConfig.BankName.minLength,
-  //       inputValidationConfig.BankName.maxLength,
-  //       inputValidationConfig.BankName.regex
-  //     )(value, "BankName");
-  //   }
-  // }, []);
-  // useEffect(() => {
-  //   const savedValue = sessionStorage.getItem("bankAccountNumber");
-  //   if (savedValue !== null) {
-  //     const value = JSON.parse(savedValue);
-  //     setBankAccountNumberInputValue(value);
-  //     // 触发初始验证
-  //     validateInputEvent(
-  //       inputValidationConfig.BankAccountNumber.minLength,
-  //       inputValidationConfig.BankAccountNumber.maxLength,
-  //       inputValidationConfig.BankAccountNumber.regex
-  //     )(value, "BankAccountNumber");
-  //   }
-  // }, []);
-  // useEffect(() => {
-  //   const savedValue = sessionStorage.getItem("branchName");
-  //   if (savedValue !== null) {
-  //     const value = JSON.parse(savedValue);
-  //     setBranchNameInputValue(value);
-  //     // 触发初始验证
-  //     validateInputEvent(
-  //       inputValidationConfig.BranchName.minLength,
-  //       inputValidationConfig.BranchName.maxLength,
-  //       inputValidationConfig.BranchName.regex
-  //     )(value, "BranchName");
-  //   }
-  // }, []);
-  // useEffect(() => {
-  //   const savedValue = sessionStorage.getItem("branchAddress");
-  //   if (savedValue !== null) {
-  //     const value = JSON.parse(savedValue);
-  //     setBranchAddressInputValue(value);
-  //     // 触发初始验证
-  //     validateInputEvent(
-  //       inputValidationConfig.BranchAddress.minLength,
-  //       inputValidationConfig.BranchAddress.maxLength,
-  //       inputValidationConfig.BranchAddress.regex
-  //     )(value, "BranchAddress");
-  //   }
-  // }, []);
 
   //定义输入验证接口
   interface ValidationConfig {
     minLength: number;
     maxLength: number;
     regex: RegExp;
+    errorMessage: string;
   }
-  //定义输入验证配置
-  const inputValidationConfig: Record<string, ValidationConfig> = {
-    accountHolderName: {
-      minLength: 2,
-      maxLength: 50,
-      regex: /^[\p{L}\s'-]+$/u,
+
+  //定义输入字段配置
+  interface FieldConfig {
+    key: keyof BankInfoStates;
+    label: string;
+    placeholder: string;
+    required: boolean;
+    validation: ValidationConfig;
+  }
+
+  //定义输入字段配置数组
+  const fieldConfigs: FieldConfig[] = useMemo(
+    () => [
+      {
+        key: "accountHolderNameDetails",
+        label: "Account holder's name",
+        placeholder: "Enter bank account holder name",
+        required: true,
+        validation: {
+          minLength: 2,
+          maxLength: 50,
+          regex: /^[\p{L}\s'-]+$/u,
+          errorMessage:
+            "请输入2-50个字符的姓名，只能包含字母、空格、撇号和连字符",
+        },
+      },
+      {
+        key: "bankNameDetails",
+        label: "Bank name",
+        placeholder: "Bank name",
+        required: true,
+        validation: {
+          minLength: 2,
+          maxLength: 100,
+          regex: /^[\p{L}\d\s()-]+$/u,
+          errorMessage:
+            "请输入2-100个字符的银行名称，只能包含字母、数字、空格、括号和连字符",
+        },
+      },
+      {
+        key: "bankAccountNumberDetails",
+        label: "Bank account number",
+        placeholder: "Enter bank account number",
+        required: true,
+        validation: {
+          minLength: 8,
+          maxLength: 34,
+          regex: /^[\d\s-]+$/u,
+          errorMessage: "请输入8-34位的银行账号，只能包含数字、空格和连字符",
+        },
+      },
+      {
+        key: "branchNameDetails",
+        label: "Branch name",
+        placeholder: "Enter branch name",
+        required: false,
+        validation: {
+          minLength: 2,
+          maxLength: 100,
+          regex: /^[\p{L}\d\s()-]+$/u,
+          errorMessage:
+            "请输入2-100个字符的分行名称，只能包含字母、数字、空格、括号和连字符",
+        },
+      },
+      {
+        key: "branchAddressDetails",
+        label: "Branch address",
+        placeholder: "Branch address",
+        required: false,
+        validation: {
+          minLength: 5,
+          maxLength: 200,
+          regex: /^[\p{L}\d\s,.-]+$/u,
+          errorMessage:
+            "请输入5-200个字符的分行地址，只能包含字母、数字、空格、逗号、句号和连字符",
+        },
+      },
+    ],
+    []
+  );
+  const validateInputEvent = useCallback(
+    (value: string, name: keyof BankInfoStates) => {
+      const config = fieldConfigs.find(
+        (field) => field.key === name
+      )?.validation;
+      if (!config) return;
+
+      if (value.length > 0) {
+        setBankInfoDetails((prev) => {
+          return {
+            ...prev,
+            [name]: {
+              ...prev[name],
+              inputValue: value,
+              inputFilled: true,
+            },
+          };
+        });
+        if (
+          value.length >= config.minLength &&
+          value.length <= config.maxLength &&
+          config.regex.test(value)
+        ) {
+          setBankInfoDetails((prev) => {
+            return {
+              ...prev,
+              [name]: {
+                ...prev[name],
+                inputValue: value,
+                inputValidation: true,
+                inputFilled: true,
+              },
+            };
+          });
+          const storageKey = selectedUserIndex !== null ? `${selectedUserIndex}_${name}` : name;
+          sessionStorage.setItem(storageKey, JSON.stringify(value));
+        } else {
+          setBankInfoDetails((prev) => {
+            return {
+              ...prev,
+              [name]: {
+                ...prev[name],
+                inputValue: value,
+                inputValidation: false,
+                inputFilled: true,
+              },
+            };
+          });
+          const storageKey = selectedUserIndex !== null ? `${selectedUserIndex}_${name}` : name;
+          sessionStorage.removeItem(storageKey);
+        }
+      } else {
+        setBankInfoDetails((prev) => {
+          return {
+            ...prev,
+            [name]: {
+              ...prev[name],
+              inputValue: value,
+              inputValidation: false,
+              inputFilled: false,
+            },
+          };
+        });
+        const storageKey = selectedUserIndex !== null ? `${selectedUserIndex}_${name}` : name;
+        sessionStorage.removeItem(storageKey);
+      }
     },
-    bankName: {
-      minLength: 2,
-      maxLength: 100,
-      regex: /^[\p{L}\d\s()-]+$/u,
-    },
-    bankAccountNumber: {
-      minLength: 8,
-      maxLength: 34,
-      regex: /^[\d\s-]+$/u,
-    },
-    branchName: {
-      minLength: 2,
-      maxLength: 100,
-      regex: /^[\p{L}\d\s()-]+$/u,
-    },
-    branchAddress: {
-      minLength: 5,
-      maxLength: 200,
-      regex: /^[\p{L}\d\s,.-]+$/u,
-    },
+    [fieldConfigs, selectedUserIndex]
+  );
+
+  const handleBankInfoOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const { name, value } = e.target;
+    debounceFunction(validateInputEvent, 150)(
+      value,
+      name as keyof BankInfoStates
+    );
   };
 
+  const onClick = () => {
+    setSelected(!selected);
+  };
+
+  // 监听表单验证状态
+  useEffect(() => {
+    const requiredFields = fieldConfigs.filter((field) => field.required);
+    const allRequiredFieldsValid = requiredFields.every(
+      (field) => bankInfoDetails[field.key].inputValidation === true
+    );
+    const allFieldsValid = Object.values(bankInfoDetails).every(
+      (field) => field.inputValidation === true
+    );
+
+    setIsBankInfoValid(allRequiredFieldsValid && allFieldsValid && selected);
+  }, [bankInfoDetails, selected, setIsBankInfoValid, fieldConfigs]);
+
+  // 从sessionStorage恢复数据
+  useEffect(() => {
+    if (selectedUserIndex !== null) {
+      fieldConfigs.forEach((field) => {
+        const storageKey = `${selectedUserIndex}_${field.key}`;
+        const savedValue = sessionStorage.getItem(storageKey);
+        if (savedValue !== null) {
+          try {
+            const value = JSON.parse(savedValue);
+            validateInputEvent(value, field.key);
+          } catch (error) {
+            console.error(`Error parsing saved value for ${field.key}:`, error);
+          }
+        }
+      });
+    }
+  }, [fieldConfigs, validateInputEvent, selectedUserIndex]);
+
   return (
-    <div>
-      <h1 className="text-3xl font-bold">Add New Payout Account</h1>
-      <h3 className="mt-4 text-sm">
-        The bank will validate your information with the relevant documentation
-        before any funds can be transferred to this bank account
-      </h3>
-      <h3 className="mt-2 text-sm">
-        All fields marked with<span className="text-red-700 px-1">*</span>are
-        mandatory
-      </h3>
-      <div className="flex flex-wrap">
-        <div className="w-1/2 my-4">
-          <h4 className="pl-3">
-            Account holder's name<span className="text-red-700">*</span>
-          </h4>
-          <input
-            type="text"
-            placeholder="Enter bank account holder name"
-            title="Account holder's name"
-            className={`${inputStyle}`}
-            name="accountHolderName"
-            value={accountHolderNameInputValue}
-            onChange={handleAccountHolderNameChange}
-          />
-          {!accountHolderNameDetails.accountHolderNameValidation &&
-            accountHolderNameDetails.accountHolderNameInputFilled && (
-              <h4 className="text-red-700 pl-3">请正确输入2~50长度的字符串</h4>
-            )}
-        </div>
-        <div className="w-1/2 my-4">
-          <h4 className="pl-3">
-            Bank name<span className="text-red-700">*</span>
-          </h4>
-          <input
-            type="text"
-            placeholder="Bank name"
-            title="Bank name"
-            className={`${inputStyle}`}
-            name="bankName"
-            value={bankNameInputValue}
-            onChange={handleBankNameChange}
-          />
-          {!bankNameDetails.bankNameValidation &&
-            bankNameDetails.bankNameInputFilled && (
-              <h4 className="text-red-700 pl-3">请正确输入</h4>
-            )}
-        </div>
-        <div className="w-1/2 my-4">
-          <h4 className="pl-3">
-            Bank account number<span className="text-red-700">*</span>
-          </h4>
-          <input
-            type="text"
-            placeholder="Enter bank account number"
-            title="Bank account number"
-            className={`${inputStyle}`}
-            name="bankAccountNumber"
-            value={bankAccountNumberInputValue}
-            onChange={handleBankAccountNumberChange}
-          />
-          {!bankAccountNumberDetails.bankAccountNumberValidation &&
-            bankAccountNumberDetails.bankAccountNumberInputFilled && (
-              <h4 className="text-red-700 pl-3">请正确输入</h4>
-            )}
-        </div>
-        <div className="w-1/2 my-4">
-          <h4 className="pl-3">Branch name</h4>
-          <input
-            type="text"
-            placeholder="Enter branch name"
-            title="Branch name"
-            className={`${inputStyle}`}
-            name="branchName"
-            value={branchNameInputValue}
-            onChange={handleBranchNameChange}
-          />
-          {!branchNameDetails.branchNameValidation &&
-            branchNameDetails.branchNameInputFilled && (
-              <h4 className="text-red-700 pl-3">请正确输入</h4>
-            )}
-        </div>
-        <div className="w-1/2 my-4">
-          <h4 className="pl-3">Branch address</h4>
-          <input
-            type="text"
-            placeholder="Branch address"
-            title="Branch address"
-            className={`${inputStyle}`}
-            name="branchAddress"
-            value={branchAddressInputValue}
-            onChange={handleBranchAddressChange}
-          />
-          {!branchAddressDetails.branchAddressValidation &&
-            branchAddressDetails.branchAddressInputFilled && (
-              <h4 className="text-red-700 pl-3">请正确输入</h4>
-            )}
+    <div className="max-w-5xl mx-auto px-4 py-6 bg-white min-h-screen">
+      {/* 页面标题区域 */}
+      <div className="mb-6">
+        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3">
+          Add New Payout Account
+        </h1>
+        <div className="bg-blue-50 border-l-4 border-blue-400 p-3 rounded-r-lg">
+          <p className="text-sm text-gray-700 mb-1">
+            The bank will validate your information with the relevant
+            documentation before any funds can be transferred to this bank
+            account.
+          </p>
+          <p className="text-xs text-gray-600">
+            All fields marked with{" "}
+            <span className="text-red-500 font-semibold">*</span> are mandatory
+          </p>
         </div>
       </div>
-      <UploadCard item={{ name: "First page savings book" }} />
-      <div className="w-full  flex justify-start items-center py-2">
-        <div
-          className={`w-4 h-4 border rounded-full relative mr-2 select-none ${
-            selected ? "bg-blue-500" : " border-gray-600"
-          } flex justify-center items-center shadow-lg `}
-          onClick={onClick}
-        >
-          <div
-            className={`w-1.5 h-1.5  rounded-full absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 "bg-white" ${
-              selected ? "bg-white" : "border-none"
-            }`}
-          ></div>
+
+      {/* 表单区域 */}
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6">
+        {fieldConfigs.map((field) => (
+          <div key={field.key} className="space-y-1.5">
+            <label className="block text-sm font-medium text-gray-700">
+              {field.label}
+              {field.required && <span className="text-red-500 ml-1">*</span>}
+            </label>
+            <div className="relative">
+              <input
+                type="text"
+                placeholder={field.placeholder}
+                title={field.label}
+                className={getInputStyle(
+                  bankInfoDetails[field.key].inputValidation,
+                  bankInfoDetails[field.key].inputFilled
+                )}
+                name={field.key}
+                value={bankInfoDetails[field.key].inputValue}
+                onChange={handleBankInfoOnChange}
+              />
+              {/* 验证状态图标 */}
+              {bankInfoDetails[field.key].inputFilled && (
+                <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+                  {bankInfoDetails[field.key].inputValidation === true ? (
+                    <svg
+                      className="h-5 w-5 text-green-500"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  ) : (
+                    <svg
+                      className="h-5 w-5 text-red-500"
+                      fill="currentColor"
+                      viewBox="0 0 20 20"
+                    >
+                      <path
+                        fillRule="evenodd"
+                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                        clipRule="evenodd"
+                      />
+                    </svg>
+                  )}
+                </div>
+              )}
+            </div>
+            {/* 错误提示 */}
+            {!bankInfoDetails[field.key].inputValidation &&
+              bankInfoDetails[field.key].inputFilled && (
+                <div className="flex items-start space-x-2">
+                  <svg
+                    className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0"
+                    fill="currentColor"
+                    viewBox="0 0 20 20"
+                  >
+                    <path
+                      fillRule="evenodd"
+                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                      clipRule="evenodd"
+                    />
+                  </svg>
+                  <p className="text-sm text-red-600">
+                    {field.validation.errorMessage}
+                  </p>
+                </div>
+              )}
+          </div>
+        ))}
+      </div>
+
+      {/* 文件上传区域 */}
+      <div className="mb-6">
+        <h3 className="text-base font-medium text-gray-800 mb-3">
+          Required Documents
+        </h3>
+        <div className="bg-gray-50 p-3 rounded-md">
+          <UploadCard item={{ name: "First page savings book" }} />
         </div>
-        <span className="text-xs">
-          I declare that have read under stood and fully agreed to the{" "}
-          <span className="text-red-600">Terms and Conditions</span> for adding
-          the new payout account including the privacy policy.
-        </span>
+      </div>
+
+      {/* 条款同意区域 */}
+      <div className="bg-gray-50 border border-gray-200 rounded-md p-4">
+        <div className="flex items-start space-x-3">
+          <div className="flex-shrink-0 mt-0.5">
+            <button
+              type="button"
+              className={`w-4 h-4 rounded border-2 flex items-center justify-center transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:ring-offset-1 ${
+                selected
+                  ? "bg-blue-600 border-blue-600 hover:bg-blue-700"
+                  : "border-gray-300 hover:border-gray-400 bg-white"
+              }`}
+              onClick={onClick}
+            >
+              {selected && (
+                <svg
+                  className="w-2.5 h-2.5 text-white"
+                  fill="currentColor"
+                  viewBox="0 0 20 20"
+                >
+                  <path
+                    fillRule="evenodd"
+                    d="M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z"
+                    clipRule="evenodd"
+                  />
+                </svg>
+              )}
+            </button>
+          </div>
+          <div className="flex-1">
+            <p className="text-xs text-gray-700 leading-relaxed">
+              I declare that I have read, understood and fully agreed to the{" "}
+              <button className="text-blue-600 hover:text-blue-800 underline font-medium">
+                Terms and Conditions
+              </button>{" "}
+              for adding the new payout account including the privacy policy.
+            </p>
+          </div>
+        </div>
       </div>
     </div>
   );
