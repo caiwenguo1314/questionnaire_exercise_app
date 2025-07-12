@@ -6,7 +6,10 @@ export default function BankInfo({
 }: {
   setIsBankInfoValid: (isValid: boolean) => void;
 }) {
+<<<<<<< HEAD
+=======
   //定义输入框样式
+>>>>>>> 1db20abc4f2dd3eadeebc551e1be3f99071726ad
   const inputStyle =
     "w-10/12 border border-gray-900 rounded-2xl ml-2 pl-2 h-8 bg-gray-100";
 
@@ -418,6 +421,33 @@ export default function BankInfo({
       regex: /^[\p{L}\d\s,.-]+$/u,
     },
   };
+<<<<<<< HEAD
+  const [selected, setSelected] = useState(false);
+  const onClick = () => {
+    setSelected(!selected);
+  };
+
+  useEffect(() => {
+    const validations = [
+      accountHolderNameDetails.accountHolderNameValidation,
+      bankNameDetails.bankNameValidation,
+      bankAccountNumberDetails.bankAccountNumberValidation,
+      branchNameDetails.branchNameValidation,
+      branchAddressDetails.branchAddressValidation,
+    ];
+
+    const allFieldsValid = validations.every((v) => v === true);
+    console.log("validations", validations);
+    setIsBankInfoValid(allFieldsValid);
+  }, [
+    accountHolderNameDetails,
+    bankNameDetails,
+    bankAccountNumberDetails,
+    branchNameDetails,
+    branchAddressDetails,
+  ]);
+=======
+>>>>>>> 1db20abc4f2dd3eadeebc551e1be3f99071726ad
 
   return (
     <div>
@@ -444,6 +474,12 @@ export default function BankInfo({
             value={accountHolderNameInputValue}
             onChange={handleAccountHolderNameChange}
           />
+<<<<<<< HEAD
+          {thirdValidationState.AccountHolderName && (
+            <h4 className="text-green-700 pl-3">输入有效</h4>
+          )}
+=======
+>>>>>>> 1db20abc4f2dd3eadeebc551e1be3f99071726ad
           {!accountHolderNameDetails.accountHolderNameValidation &&
             accountHolderNameDetails.accountHolderNameInputFilled && (
               <h4 className="text-red-700 pl-3">请正确输入2~50长度的字符串</h4>
