@@ -63,44 +63,31 @@ export default function PageLayout() {
   const selectedCardData =
     selectedUserIndex !== null ? assuredCardData[selectedUserIndex] : null;
 
-  // 当用户选择变化时，清除相关数据
+  // 新增：问卷表单状态
+  const [questionnaireData, setQuestionnaireData] = useState<{
+    [key: string]: {
+      admissionDate?: string;
+      dischargeDate?: string;
+      hospitalName?: string;
+      thirdPartyClaim?: string;
+      billsArray?: number[];
+    };
+  }>({});
+
+  // 新增：银行信息状态
+  const [bankInfoData, setBankInfoData] = useState<{
+    [key: string]: {
+      accountHolderNameDetails?: string;
+      bankNameDetails?: string;
+      bankAccountNumberDetails?: string;
+      branchNameDetails?: string;
+      branchAddressDetails?: string;
+    };
+  }>({});
+
+  // 当用户选择变化时，不需要清除 sessionStorage，只需要确保使用正确的用户索引
   const handleUserSelectionChange = (index: number) => {
-    // 如果选择了不同的用户，清除sessionStorage中的相关数据
     if (selectedUserIndex !== index) {
-      // 清除银行信息相关的数据
-      const bankFields = [
-        "accountHolderNameDetails",
-        "bankNameDetails",
-        "bankAccountNumberDetails",
-        "branchNameDetails",
-        "branchAddressDetails",
-      ];
-      bankFields.forEach((field) => {
-        if (selectedUserIndex !== null) {
-          sessionStorage.removeItem(`${selectedUserIndex}_${field}`);
-        }
-      });
-
-      // 清除问卷相关的数据
-      const questionnaireFields = [
-        "admissionDate",
-        "dischargeDate",
-        "hospitalName",
-        "thirdPartyClaim",
-      ];
-      questionnaireFields.forEach((field) => {
-        if (selectedUserIndex !== null) {
-          sessionStorage.removeItem(
-            `${selectedUserIndex}_questionnaire_${field}`
-          );
-        }
-      });
-
-      // 清除账单数组数据
-      if (selectedUserIndex !== null) {
-        sessionStorage.removeItem(`${selectedUserIndex}_billsArray`);
-      }
-
       // 重置验证状态
       setIsBankInfoValid(false);
       setIsQuestionnaireValid(false);
@@ -108,8 +95,45 @@ export default function PageLayout() {
 
     setSelectedUserIndex(index);
   };
+
   const [isBankInfoValid, setIsBankInfoValid] = useState(false);
   const [isQuestionnaireValid, setIsQuestionnaireValid] = useState(false);
+
+  // 更新问卷数据的函数
+  const updateQuestionnaireData = (field: string, value: any) => {
+    if (selectedUserIndex === null) return;
+    
+    setQuestionnaireData(prev => {
+      const userKey = `${selectedUserIndex}`;
+      const userData = prev[userKey] || {};
+      
+      return {
+        ...prev,
+        [userKey]: {
+          ...userData,
+          [field]: value
+        }
+      };
+    });
+  };
+
+  // 更新银行信息的函数
+  const updateBankInfoData = (field: string, value: any) => {
+    if (selectedUserIndex === null) return;
+    
+    setBankInfoData(prev => {
+      const userKey = `${selectedUserIndex}`;
+      const userData = prev[userKey] || {};
+      
+      return {
+        ...prev,
+        [userKey]: {
+          ...userData,
+          [field]: value
+        }
+      };
+    });
+  };
 
   const stepContents = [
     <PolicySelect
@@ -120,14 +144,20 @@ export default function PageLayout() {
       setIsQuestionnaireValid={setIsQuestionnaireValid}
       selectedUserIndex={selectedUserIndex}
       selectedCardData={selectedCardData}
+      questionnaireData={questionnaireData[`${selectedUserIndex}`] || {}}
+      updateQuestionnaireData={updateQuestionnaireData}
     />,
     <BankInfo
       setIsBankInfoValid={setIsBankInfoValid}
       selectedUserIndex={selectedUserIndex}
+      bankInfoData={bankInfoData[`${selectedUserIndex}`] || {}}
+      updateBankInfoData={updateBankInfoData}
     />,
     <Review
       selectedCardData={selectedCardData}
       selectedUserIndex={selectedUserIndex}
+      bankInfoData={bankInfoData[`${selectedUserIndex}`] || {}}
+      questionnaireData={questionnaireData[`${selectedUserIndex}`] || {}}
     />,
   ];
 

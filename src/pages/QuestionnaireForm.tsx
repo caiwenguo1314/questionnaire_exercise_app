@@ -3,6 +3,61 @@ import BillComponent from "components/form/BillComponent";
 import UploadCard from "components/ui/uploadCard";
 import { useCallback, useEffect, useMemo, useState } from "react";
 
+// 字段验证配置
+const fieldValidations = {
+  admissionDate: {
+    required: true,
+    errorMessage: "请输入入院日期",
+  },
+  dischargeDate: {
+    required: true,
+    errorMessage: "请输入出院日期",
+  },
+  hospitalName: {
+    required: true,
+    errorMessage: "请输入医院名称（至少2个字符）",
+  },
+};
+
+// 根据验证状态获取输入框样式
+const getInputStyle = (isValid: boolean | null, isFilled: boolean | null) => {
+  const baseStyle = "w-full rounded-md border py-2 px-3 shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500";
+  
+  if (isFilled === null) return `${baseStyle} border-gray-300`;
+  if (isValid === true) return `${baseStyle} border-green-300 bg-green-50`;
+  if (isValid === false) return `${baseStyle} border-red-300 bg-red-50`;
+  
+  return `${baseStyle} border-gray-300`;
+};
+
+// 上传卡片数据
+const UploadCardsData = [
+  {
+    name: "Medical Report",
+    required: true,
+  },
+  {
+    name: "Original Bills",
+    required: true,
+  },
+  {
+    name: "Prescription",
+    required: false,
+  },
+  {
+    name: "Test Results",
+    required: false,
+  },
+  {
+    name: "Third Party Settlement",
+    required: false,
+  },
+  {
+    name: "Other Documents",
+    required: false,
+  },
+];
+
 export interface Insurance {
   insurancePiece: string;
   insuranceNumber: string;
@@ -27,86 +82,52 @@ interface FormState {
   thirdPartyClaim: string | null;
 }
 
+// 更新组件接口，添加新的 props
 export default function QuestionnaireForm({
   setIsQuestionnaireValid,
   selectedUserIndex,
   selectedCardData,
+  questionnaireData, // 新增
+  updateQuestionnaireData, // 新增
 }: {
   setIsQuestionnaireValid?: (isValid: boolean) => void;
   selectedUserIndex: number | null;
   selectedCardData: AssuredPerson | null;
+  questionnaireData: {
+    admissionDate?: string;
+    dischargeDate?: string;
+    hospitalName?: string;
+    thirdPartyClaim?: string;
+    billsArray?: number[];
+  };
+  updateQuestionnaireData: (field: string, value: any) => void;
 }) {
-  // selectedCardData 现在通过 props 传入
-
   // 表单状态管理
   const [formState, setFormState] = useState<FormState>({
-    admissionDate: { value: "", isValid: null, isFilled: null },
-    dischargeDate: { value: "", isValid: null, isFilled: null },
-    hospitalName: { value: "", isValid: null, isFilled: null },
-    thirdPartyClaim: null,
+    admissionDate: { 
+      value: questionnaireData.admissionDate || "", 
+      isValid: null, 
+      isFilled: questionnaireData.admissionDate ? true : null 
+    },
+    dischargeDate: { 
+      value: questionnaireData.dischargeDate || "", 
+      isValid: null, 
+      isFilled: questionnaireData.dischargeDate ? true : null 
+    },
+    hospitalName: { 
+      value: questionnaireData.hospitalName || "", 
+      isValid: null, 
+      isFilled: questionnaireData.hospitalName ? true : null 
+    },
+    thirdPartyClaim: questionnaireData.thirdPartyClaim || null,
   });
 
-  const UploadCardsData = [
-    { name: "Doctor's statement/Discharge summary", required: true },
-    {
-      name: "Original official receipt and breakdown of billing",
-      required: true,
-    },
-    { name: "Personal identity card", required: true },
-    {
-      name: "Results and interpretation of laboratory and diagnostic tests",
-      required: false,
-    },
-    { name: "Passport and/or boarding pass", required: false },
-    { name: "Name change letter", required: false },
-    { name: "Coordination of benefits from other insurance", required: false },
-    { name: "Attachment of room prices in hospital", required: false },
-    { name: "Other documents(if any)", required: false },
-  ];
-
-  // 输入框样式函数
-  const getInputStyle = (isValid: boolean | null, isFilled: boolean | null) => {
-    const baseStyle =
-      "w-full px-3 py-2.5 border-2 rounded-md transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent text-sm";
-
-    if (isFilled && isValid === false) {
-      return `${baseStyle} border-red-400 bg-red-50 focus:ring-red-500`;
-    } else if (isFilled && isValid === true) {
-      return `${baseStyle} border-green-400 bg-green-50 focus:ring-green-500`;
-    } else {
-      return `${baseStyle} border-gray-300 bg-white hover:border-gray-400`;
-    }
-  };
-
-  // 字段验证配置
-  const fieldValidations = useMemo(
-    () => ({
-      admissionDate: { required: true, errorMessage: "请选择入院日期" },
-      dischargeDate: { required: true, errorMessage: "请选择出院日期" },
-      hospitalName: {
-        required: true,
-        errorMessage: "请输入医院/诊所名称，至少2个字符",
-      },
-    }),
-    []
+  // 初始化账单数组
+  const [billsArray, setBillsArray] = useState<number[]>(
+    questionnaireData.billsArray || [1]
   );
 
-  const [billsArray, setBillsArray] = useState<number[]>([1]);
-  // 防抖函数
-  const debounceFunction = <T extends (...args: any[]) => void>(
-    fn: T,
-    delay: number
-  ) => {
-    let timer: NodeJS.Timeout;
-    return (...args: Parameters<T>) => {
-      clearTimeout(timer);
-      timer = setTimeout(() => {
-        fn(...args);
-      }, delay);
-    };
-  };
-
-  // 验证输入字段
+  // 修改验证字段函数，使用 updateQuestionnaireData 而不是 sessionStorage
   const validateField = useCallback(
     (fieldName: keyof FormState, value: string) => {
       if (fieldName === "thirdPartyClaim") return;
@@ -234,18 +255,9 @@ export default function QuestionnaireForm({
       }
 
       // 存储到sessionStorage
+      // 使用 updateQuestionnaireData 替代 sessionStorage
       if (isValid && value.trim().length > 0) {
-        const storageKey =
-          selectedUserIndex !== null
-            ? `${selectedUserIndex}_questionnaire_${fieldName}`
-            : `questionnaire_${fieldName}`;
-        sessionStorage.setItem(storageKey, value);
-      } else {
-        const storageKey =
-          selectedUserIndex !== null
-            ? `${selectedUserIndex}_questionnaire_${fieldName}`
-            : `questionnaire_${fieldName}`;
-        sessionStorage.removeItem(storageKey);
+        updateQuestionnaireData(fieldName, value);
       }
     },
     [
@@ -258,39 +270,33 @@ export default function QuestionnaireForm({
       formState.dischargeDate.errorMessage,
       formState.dischargeDate.isFilled,
       formState.dischargeDate.isValid,
-      selectedUserIndex,
+      updateQuestionnaireData,
     ]
   );
 
   // 处理输入变化
-  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    debounceFunction(validateField, 300)(name as keyof FormState, value);
-  };
+  const handleInputChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+      validateField(name as keyof FormState, value);
+    },
+    [validateField]
+  );
 
   // 处理第三方理赔选择
   const handleThirdPartyClaimChange = (value: string) => {
     setFormState((prev) => ({ ...prev, thirdPartyClaim: value }));
-    const storageKey =
-      selectedUserIndex !== null
-        ? `${selectedUserIndex}_questionnaire_thirdPartyClaim`
-        : "questionnaire_thirdPartyClaim";
-    sessionStorage.setItem(storageKey, value);
+    updateQuestionnaireData("thirdPartyClaim", value);
   };
 
   const handleBillCurrent = () => {
     setBillsArray((prev) => {
       const newBill = prev.length + 1;
       const newBillsArray = [...prev, newBill];
-
-      // 保存到sessionStorage
-      if (selectedUserIndex !== null) {
-        sessionStorage.setItem(
-          `${selectedUserIndex}_billsArray`,
-          JSON.stringify(newBillsArray)
-        );
-      }
-
+      
+      // 使用 updateQuestionnaireData 替代 sessionStorage
+      updateQuestionnaireData("billsArray", newBillsArray);
+      
       return newBillsArray;
     });
   };
@@ -302,20 +308,15 @@ export default function QuestionnaireForm({
         return prev;
       }
       const newBillsArray = prev.filter((bill) => bill !== billToDelete);
-
-      // 保存到sessionStorage
-      if (selectedUserIndex !== null) {
-        sessionStorage.setItem(
-          `${selectedUserIndex}_billsArray`,
-          JSON.stringify(newBillsArray)
-        );
-      }
-
+      
+      // 使用 updateQuestionnaireData 替代 sessionStorage
+      updateQuestionnaireData("billsArray", newBillsArray);
+      
       return newBillsArray;
     });
   };
 
-  // 监听表单验证状态
+  // 监听表单验证状态 - 保持不变
   useEffect(() => {
     const isFormValid = Boolean(
       formState.admissionDate.isValid === true &&
@@ -324,62 +325,14 @@ export default function QuestionnaireForm({
         formState.thirdPartyClaim !== null
     );
 
-    // 调试信息
-    console.log("表单验证状态:", {
-      admissionDate: formState.admissionDate.isValid,
-      dischargeDate: formState.dischargeDate.isValid,
-      hospitalName: formState.hospitalName.isValid,
-      thirdPartyClaim: formState.thirdPartyClaim,
-      isFormValid,
-    });
-
     if (setIsQuestionnaireValid) {
       setIsQuestionnaireValid(isFormValid);
     }
   }, [formState, setIsQuestionnaireValid]);
 
-  // 从sessionStorage恢复数据
-  useEffect(() => {
-    if (selectedUserIndex !== null) {
-      const savedAdmissionDate = sessionStorage.getItem(
-        `${selectedUserIndex}_questionnaire_admissionDate`
-      );
-      const savedDischargeDate = sessionStorage.getItem(
-        `${selectedUserIndex}_questionnaire_dischargeDate`
-      );
-      const savedHospitalName = sessionStorage.getItem(
-        `${selectedUserIndex}_questionnaire_hospitalName`
-      );
-      const savedThirdPartyClaim = sessionStorage.getItem(
-        `${selectedUserIndex}_questionnaire_thirdPartyClaim`
-      );
+  // 不再需要从 sessionStorage 恢复数据，因为数据已通过 props 传入
+  // 移除原来的 useEffect
 
-      if (savedAdmissionDate)
-        validateField("admissionDate", savedAdmissionDate);
-      if (savedDischargeDate)
-        validateField("dischargeDate", savedDischargeDate);
-      if (savedHospitalName) validateField("hospitalName", savedHospitalName);
-      if (savedThirdPartyClaim) {
-        setFormState((prev) => ({
-          ...prev,
-          thirdPartyClaim: savedThirdPartyClaim,
-        }));
-      }
-
-      // 恢复billsArray数据
-      const savedBillsArray = sessionStorage.getItem(
-        `${selectedUserIndex}_billsArray`
-      );
-      if (savedBillsArray) {
-        try {
-          const billsData = JSON.parse(savedBillsArray);
-          setBillsArray(billsData);
-        } catch (error) {
-          console.error("Error parsing saved bills array:", error);
-        }
-      }
-    }
-  }, [validateField, selectedUserIndex]);
   return (
     <div className="max-w-5xl mx-auto px-4 py-6 bg-white min-h-screen">
       {/* 页面标题区域 */}

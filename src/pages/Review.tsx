@@ -1,38 +1,37 @@
 import React from "react";
 import { AssuredPerson } from "types/form";
 
+// 更新组件接口，添加新的 props
 export default function Review({
   selectedCardData,
-  selectedUserIndex
+  selectedUserIndex,
+  bankInfoData, // 新增
+  questionnaireData, // 新增
 }: {
   selectedCardData: AssuredPerson | null;
   selectedUserIndex: number | null;
-}) {
-  // 根据选中用户获取数据
-  const getStorageValue = (key: string) => {
-    if (selectedUserIndex === null) return null;
-    return sessionStorage.getItem(`${selectedUserIndex}_${key}`);
+  bankInfoData: {
+    accountHolderNameDetails?: string;
+    bankNameDetails?: string;
+    bankAccountNumberDetails?: string;
+    branchNameDetails?: string;
+    branchAddressDetails?: string;
   };
+  questionnaireData: {
+    admissionDate?: string;
+    dischargeDate?: string;
+    hospitalName?: string;
+    thirdPartyClaim?: string;
+    billsArray?: number[];
+  };
+}) {
+  // 不再需要从 sessionStorage 获取数据
+  // 直接使用 props 中的数据
   
-  const accountHolderNameValue = getStorageValue("accountHolderNameDetails");
-  const bankNameValue = getStorageValue("bankNameDetails");
-  const bankAccountNumberValue = getStorageValue("bankAccountNumberDetails");
-  const branchNameValue = getStorageValue("branchNameDetails");
-  const branchAddressValue = getStorageValue("branchAddressDetails");
-  
-  const admissionDateValue = getStorageValue("questionnaire_admissionDate");
-  const dischargeDateValue = getStorageValue("questionnaire_dischargeDate");
-  const hospitalNameValue = getStorageValue("questionnaire_hospitalName");
-  const thirdPartyClaimValue = getStorageValue("questionnaire_thirdPartyClaim");
-  
-  // 解析JSON格式的银行信息数据
-  const parseStorageValue = (value: string | null) => {
+  // 保留 parseStorageValue 函数用于兼容性，但现在它直接处理值而不是从 sessionStorage 获取
+  const parseStorageValue = (value: string | null | undefined) => {
     if (!value) return null;
-    try {
-      return JSON.parse(value);
-    } catch {
-      return value;
-    }
+    return value;
   };
 
   return (
@@ -82,13 +81,13 @@ export default function Review({
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1">Admission Date</label>
               <div className="text-gray-800 bg-gray-50 px-3 py-2 rounded-md">
-                {admissionDateValue || "Not provided"}
+                {questionnaireData.admissionDate || "Not provided"}
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1">Discharge Date</label>
               <div className="text-gray-800 bg-gray-50 px-3 py-2 rounded-md">
-                {dischargeDateValue || "Not provided"}
+                {questionnaireData.dischargeDate || "Not provided"}
               </div>
             </div>
           </div>
@@ -96,13 +95,13 @@ export default function Review({
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1">Hospital/Clinic Name</label>
               <div className="text-gray-800 bg-gray-50 px-3 py-2 rounded-md">
-                {hospitalNameValue || "Not provided"}
+                {questionnaireData.hospitalName || "Not provided"}
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1">Third Party Claim</label>
               <div className="text-gray-800 bg-gray-50 px-3 py-2 rounded-md">
-                {thirdPartyClaimValue === "yes" ? "Yes" : thirdPartyClaimValue === "no" ? "No" : "Not selected"}
+                {questionnaireData.thirdPartyClaim === "yes" ? "Yes" : questionnaireData.thirdPartyClaim === "no" ? "No" : "Not selected"}
               </div>
             </div>
           </div>
@@ -122,19 +121,19 @@ export default function Review({
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1">Account Holder's Name</label>
               <div className="text-gray-800 bg-gray-50 px-3 py-2 rounded-md">
-                {parseStorageValue(accountHolderNameValue) || "Not provided"}
+                {bankInfoData.accountHolderNameDetails || "Not provided"}
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1">Bank Name</label>
               <div className="text-gray-800 bg-gray-50 px-3 py-2 rounded-md">
-                {parseStorageValue(bankNameValue) || "Not provided"}
+                {bankInfoData.bankNameDetails || "Not provided"}
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1">Bank Account Number</label>
               <div className="text-gray-800 bg-gray-50 px-3 py-2 rounded-md font-mono">
-                {parseStorageValue(bankAccountNumberValue) || "Not provided"}
+                {bankInfoData.bankAccountNumberDetails || "Not provided"}
               </div>
             </div>
           </div>
@@ -142,13 +141,13 @@ export default function Review({
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1">Branch Name</label>
               <div className="text-gray-800 bg-gray-50 px-3 py-2 rounded-md">
-                {parseStorageValue(branchNameValue) || "Not provided"}
+                {bankInfoData.branchNameDetails || "Not provided"}
               </div>
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-600 mb-1">Branch Address</label>
               <div className="text-gray-800 bg-gray-50 px-3 py-2 rounded-md">
-                {parseStorageValue(branchAddressValue) || "Not provided"}
+                {bankInfoData.branchAddressDetails || "Not provided"}
               </div>
             </div>
           </div>

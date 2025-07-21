@@ -1,12 +1,23 @@
 import UploadCard from "components/ui/uploadCard";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
+// 更新组件接口，添加新的 props
 export default function BankInfo({
   setIsBankInfoValid,
   selectedUserIndex,
+  bankInfoData, // 新增
+  updateBankInfoData, // 新增
 }: {
   setIsBankInfoValid: (isValid: boolean) => void;
   selectedUserIndex: number | null;
+  bankInfoData: {
+    accountHolderNameDetails?: string;
+    bankNameDetails?: string;
+    bankAccountNumberDetails?: string;
+    branchNameDetails?: string;
+    branchAddressDetails?: string;
+  };
+  updateBankInfoData: (field: string, value: any) => void;
 }) {
   //定义输入框样式
   const getInputStyle = (isValid: boolean | null, isFilled: boolean | null) => {
@@ -35,33 +46,7 @@ export default function BankInfo({
     branchNameDetails: inputValueState;
     branchAddressDetails: inputValueState;
   }
-  const [bankInfoDetails, setBankInfoDetails] = useState<BankInfoStates>({
-    accountHolderNameDetails: {
-      inputValue: "",
-      inputValidation: null,
-      inputFilled: null,
-    },
-    bankNameDetails: {
-      inputValue: "",
-      inputValidation: null,
-      inputFilled: null,
-    },
-    bankAccountNumberDetails: {
-      inputValue: "",
-      inputValidation: null,
-      inputFilled: null,
-    },
-    branchNameDetails: {
-      inputValue: "",
-      inputValidation: null,
-      inputFilled: null,
-    },
-    branchAddressDetails: {
-      inputValue: "",
-      inputValidation: null,
-      inputFilled: null,
-    },
-  });
+
 
   const [selected, setSelected] = useState(false);
 
@@ -166,6 +151,36 @@ export default function BankInfo({
     ],
     []
   );
+  // 初始化银行信息状态，使用 props 中的数据
+  const [bankInfoDetails, setBankInfoDetails] = useState<BankInfoStates>({
+    accountHolderNameDetails: {
+      inputValue: bankInfoData.accountHolderNameDetails || "",
+      inputValidation: null,
+      inputFilled: bankInfoData.accountHolderNameDetails ? true : null,
+    },
+    bankNameDetails: {
+      inputValue: bankInfoData.bankNameDetails || "",
+      inputValidation: null,
+      inputFilled: bankInfoData.bankNameDetails ? true : null,
+    },
+    bankAccountNumberDetails: {
+      inputValue: bankInfoData.bankAccountNumberDetails || "",
+      inputValidation: null,
+      inputFilled: bankInfoData.bankAccountNumberDetails ? true : null,
+    },
+    branchNameDetails: {
+      inputValue: bankInfoData.branchNameDetails || "",
+      inputValidation: null,
+      inputFilled: bankInfoData.branchNameDetails ? true : null,
+    },
+    branchAddressDetails: {
+      inputValue: bankInfoData.branchAddressDetails || "",
+      inputValidation: null,
+      inputFilled: bankInfoData.branchAddressDetails ? true : null,
+    },
+  });
+
+  // 修改验证函数，使用 updateBankInfoData 而不是 sessionStorage
   const validateInputEvent = useCallback(
     (value: string, name: keyof BankInfoStates) => {
       const config = fieldConfigs.find(
@@ -200,8 +215,8 @@ export default function BankInfo({
               },
             };
           });
-          const storageKey = selectedUserIndex !== null ? `${selectedUserIndex}_${name}` : name;
-          sessionStorage.setItem(storageKey, JSON.stringify(value));
+          // 使用 updateBankInfoData 替代 sessionStorage
+          updateBankInfoData(name, value);
         } else {
           setBankInfoDetails((prev) => {
             return {
@@ -214,8 +229,7 @@ export default function BankInfo({
               },
             };
           });
-          const storageKey = selectedUserIndex !== null ? `${selectedUserIndex}_${name}` : name;
-          sessionStorage.removeItem(storageKey);
+          // 无效数据，可以选择不更新或设置为 null
         }
       } else {
         setBankInfoDetails((prev) => {
@@ -229,11 +243,10 @@ export default function BankInfo({
             },
           };
         });
-        const storageKey = selectedUserIndex !== null ? `${selectedUserIndex}_${name}` : name;
-        sessionStorage.removeItem(storageKey);
+        // 空值，可以选择不更新或设置为 null
       }
     },
-    [fieldConfigs, selectedUserIndex]
+    [fieldConfigs, updateBankInfoData]
   );
 
   const handleBankInfoOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
