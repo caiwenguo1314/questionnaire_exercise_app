@@ -1,15 +1,17 @@
-import { useState } from "react";
 //默认导出步骤条组件
 export default function StepProgress(
   /* 形参 */ {
     steps,
     currentStep,
     setCurrentStep,
+    canNavigateToStep,
   }: /* 对形参定义 */ {
     /* steps是一个数组，数组中的每个元素都是一个对象，包含两个属性，id是数字，label是字符串 */
     steps: { id: number; label: string }[];
     currentStep: number;
     setCurrentStep: (currentStep: number) => void;
+    /* 验证函数，检查是否可以跳转到指定步骤 */
+    canNavigateToStep?: (stepId: number) => boolean;
     /* current是一个数字，表示当前步骤 */
   }
 ) {
@@ -34,7 +36,7 @@ export default function StepProgress(
             {/* 做一个8*8的圆，变小手，设一个过渡动画，0.3s，同时进行判断颜色，选中红色，未被选中浅灰，选中过深灰 */}
             <div
               /* 这是一个模版字符串，可以写变量 但要放到${变量}中 */
-              className={`w-8 h-8 flex items-center justify-center rounded-full text-white font-bold cursor-pointer transition-all duration-300 
+              className={`w-8 h-8 flex items-center justify-center rounded-full text-white font-bold transition-all duration-300 
               ${
                 /* 三元运算符 */
                 currentStep === step.id
@@ -43,8 +45,28 @@ export default function StepProgress(
                   ? "bg-gray-500"
                   : "bg-gray-300"
               }
+              ${
+                /* 检查是否可以点击 */
+                canNavigateToStep && canNavigateToStep(step.id)
+                  ? "cursor-pointer hover:scale-110"
+                  : step.id <= currentStep
+                  ? "cursor-pointer hover:scale-110"
+                  : "cursor-not-allowed opacity-60"
+              }
             `} /* 注册点击事件 */
-              onClick={() => setCurrentStep(step.id)}
+              onClick={() => {
+                // 只有在可以导航到该步骤时才允许跳转
+                if (canNavigateToStep) {
+                  if (canNavigateToStep(step.id)) {
+                    setCurrentStep(step.id);
+                  }
+                } else {
+                  // 默认行为：只能跳转到当前步骤或之前的步骤
+                  if (step.id <= currentStep) {
+                    setCurrentStep(step.id);
+                  }
+                }
+              }}
             >
               {/* 插入变量 */}
               {step.id + 1}
