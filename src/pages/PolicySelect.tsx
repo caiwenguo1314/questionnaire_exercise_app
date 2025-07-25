@@ -50,14 +50,14 @@ export default function PolicySelect({
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-4 sm:space-y-6">
       {/* Header Section */}
-      <div className="text-center space-y-3">
-        <h1 className="text-2xl font-bold text-gray-800">
+      <div className="text-center space-y-2 sm:space-y-3">
+        <h1 className="text-xl sm:text-2xl font-bold text-gray-800">
           Select Life Assured
         </h1>
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-          <p className="text-sm text-blue-700">
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4">
+          <p className="text-xs sm:text-sm text-blue-700">
             <span className="font-medium">Please select 1 life assured</span>{" "}
             for this medical claim.
           </p>
@@ -65,7 +65,7 @@ export default function PolicySelect({
       </div>
 
       {/* Cards Section */}
-      <div className="space-y-4">
+      <div className="space-y-3 sm:space-y-4">
         <AssuredCard
           assuredCardData={assuredCardData}
           selectedUserIndex={selectedUserIndex}

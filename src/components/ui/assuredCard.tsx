@@ -17,18 +17,18 @@ export default function AssuredCard({
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-3 sm:space-y-4">
       {assuredCardData.map((item, index) => (
         <div
           key={index}
-          className={`w-full bg-white border-2 rounded-lg p-6 shadow-sm transition-all duration-200 cursor-pointer hover:shadow-md ${
+          className={`w-full bg-white border-2 rounded-lg p-4 sm:p-6 shadow-sm transition-all duration-200 cursor-pointer hover:shadow-md ${
             selectedUserIndex === index 
               ? "border-blue-500 bg-blue-50" 
               : "border-gray-200 hover:border-gray-300"
           }`}
           onClick={onChooseUser(index)}
         >
-          <div className="flex items-start space-x-4">
+          <div className="flex items-start space-x-3 sm:space-x-4">
             {/* Radio Button */}
             <div className="flex-shrink-0 mt-1">
               <div
@@ -47,18 +47,18 @@ export default function AssuredCard({
             {/* Content */}
             <div className="flex-1 min-w-0">
               {/* Name */}
-              <h3 className="text-lg font-semibold text-gray-800 mb-3">
+              <h3 className="text-base sm:text-lg font-semibold text-gray-800 mb-2 sm:mb-3">
                 {item.name}
               </h3>
               
               {/* Insurance Policies */}
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
                 {item.insurance.map((insurance, insuranceIndex) => (
                   <div 
                     key={insuranceIndex}
-                    className="bg-gray-50 rounded-md p-3 border border-gray-200"
+                    className="bg-gray-50 rounded-md p-2.5 sm:p-3 border border-gray-200"
                   >
-                    <div className="text-sm font-medium text-gray-700 mb-1">
+                    <div className="text-xs sm:text-sm font-medium text-gray-700 mb-1">
                       {insurance.insurancePiece}
                     </div>
                     <div className="text-xs text-gray-500 font-mono">

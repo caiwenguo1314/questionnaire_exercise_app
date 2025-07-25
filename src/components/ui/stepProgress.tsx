@@ -23,20 +23,20 @@ export default function StepProgress(
   // }, [stepCurrent,setStepCurrent]);
 
   return (
-    /* 最外层包裹元素，设置居中，间距等 */
-    <div className="flex items-center justify-center space-r-4 p-4 mb-4">
+    /* 最外层包裹元素，设置居中，间距等 - 移动端优化 */
+    <div className="flex items-center justify-center space-r-4 p-2 md:p-4 mb-2 md:mb-4 overflow-x-auto">
       {/* 遍历steps数组，生成每个步骤的元素, 对steps这个数组中每个元素都执行以下操作，并返回*/}
       {steps.map((step, index) => (
         /* 我的理解 所有返回的也需要在一个总的div中 */
         /* 总的包裹div 并标记key 包括step.id  step.label  加连接线 */
-        <div key={step.id} className="flex items-center ">
+        <div key={step.id} className="flex items-center flex-shrink-0">
           {/* 因为label要在id下面居中，又不影响id和连接线的对齐，label用决定定位脱离文档流，而设的父元素，开启相对定位 */}
           {/* 如果直接设在key那层的话，相当于给id，label和连接线的父元素设，会出现label参照id和连接线总体居中 */}
           <div className="relative">
-            {/* 做一个8*8的圆，变小手，设一个过渡动画，0.3s，同时进行判断颜色，选中红色，未被选中浅灰，选中过深灰 */}
+            {/* 做一个圆，移动端稍小，设一个过渡动画，0.3s，同时进行判断颜色，选中红色，未被选中浅灰，选中过深灰 */}
             <div
               /* 这是一个模版字符串，可以写变量 但要放到${变量}中 */
-              className={`w-8 h-8 flex items-center justify-center rounded-full text-white font-bold transition-all duration-300 
+              className={`w-6 h-6 md:w-8 md:h-8 flex items-center justify-center rounded-full text-white font-bold transition-all duration-300 text-xs md:text-sm
               ${
                 /* 三元运算符 */
                 currentStep === step.id
@@ -71,19 +71,22 @@ export default function StepProgress(
               {/* 插入变量 */}
               {step.id + 1}
             </div>
-            {/* label */}
+            {/* label - 移动端优化 */}
             <div /* 绝对定位，参照父元素定位，通过left-1/2 -translate-x-1/2 来居中 禁止换行 通过当前值判断颜色*/
-              className={`text-sm font-medium absolute top-10 left-1/2 transform -translate-x-1/2 whitespace-nowrap ${
+              className={`text-xs md:text-sm font-medium absolute top-8 md:top-10 left-1/2 transform -translate-x-1/2 whitespace-nowrap ${
                 currentStep >= step.id ? "text-black" : "text-gray-400"
               }`}
             >
-              {/* 插入变量 */}
-              {step.label}
+              {/* 插入变量 - 移动端显示简化版本 */}
+              <span className="hidden sm:inline">{step.label}</span>
+              <span className="sm:hidden">
+                {step.label.split(' ')[0]}
+              </span>
             </div>
           </div>
-          {/* 最后一个步骤后面不添加虚线 */}
+          {/* 最后一个步骤后面不添加虚线 - 移动端调整宽度 */}
           {index < steps.length - 1 && (
-            <div className="w-24 border border-dashed border-gray-400 mx-2"></div>
+            <div className="w-12 md:w-24 border border-dashed border-gray-400 mx-1 md:mx-2"></div>
           )}
         </div>
       ))}

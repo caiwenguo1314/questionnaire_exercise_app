@@ -298,14 +298,14 @@ export default function BankInfo({
   }, [fieldConfigs, validateInputEvent, selectedUserIndex]);
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-6 bg-white min-h-screen">
+    <div className="max-w-5xl mx-auto px-3 sm:px-4 py-4 sm:py-6 bg-white min-h-screen">
       {/* 页面标题区域 */}
-      <div className="mb-6">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-3">
+      <div className="mb-4 sm:mb-6">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-2 sm:mb-3">
           Add New Payout Account
         </h1>
         <div className="bg-blue-50 border-l-4 border-blue-400 p-3 rounded-r-lg">
-          <p className="text-sm text-gray-700 mb-1">
+          <p className="text-xs sm:text-sm text-gray-700 mb-1">
             The bank will validate your information with the relevant
             documentation before any funds can be transferred to this bank
             account.
@@ -318,7 +318,7 @@ export default function BankInfo({
       </div>
 
       {/* 表单区域 */}
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6 mb-6">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6">
         {fieldConfigs.map((field) => (
           <div key={field.key} className="space-y-1.5">
             <label className="block text-sm font-medium text-gray-700">
@@ -394,8 +394,8 @@ export default function BankInfo({
       </div>
 
       {/* 文件上传区域 */}
-      <div className="mb-6">
-        <h3 className="text-base font-medium text-gray-800 mb-3">
+      <div className="mb-4 sm:mb-6">
+        <h3 className="text-sm sm:text-base font-medium text-gray-800 mb-2 sm:mb-3">
           Required Documents
         </h3>
         <div className="bg-gray-50 p-3 rounded-md">
@@ -405,8 +405,8 @@ export default function BankInfo({
       </div>
 
       {/* 条款同意区域 */}
-      <div className="bg-gray-50 border border-gray-200 rounded-md p-4">
-        <div className="flex items-start space-x-3">
+      <div className="bg-gray-50 border border-gray-200 rounded-md p-3 sm:p-4">
+        <div className="flex items-start space-x-2 sm:space-x-3">
           <div className="flex-shrink-0 mt-0.5">
             <button
               type="button"

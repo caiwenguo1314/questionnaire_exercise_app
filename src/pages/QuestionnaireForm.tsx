@@ -334,39 +334,39 @@ export default function QuestionnaireForm({
   // 移除原来的 useEffect
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-6 bg-white min-h-screen">
+    <div className="max-w-5xl mx-auto px-3 sm:px-4 py-4 sm:py-6 bg-white min-h-screen">
       {/* 页面标题区域 */}
-      <div className="mb-8">
-        <h1 className="text-2xl md:text-3xl font-bold text-gray-800 mb-4">
+      <div className="mb-6 sm:mb-8">
+        <h1 className="text-xl sm:text-2xl md:text-3xl font-bold text-gray-800 mb-3 sm:mb-4">
           Hospitalization Claim
         </h1>
 
         {/* Life Assured 信息 */}
-        <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-6">
-          <h3 className="text-sm font-medium text-blue-800 mb-1">
+        <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4 mb-4 sm:mb-6">
+          <h3 className="text-xs sm:text-sm font-medium text-blue-800 mb-1">
             Life Assured
           </h3>
-          <p className="text-lg font-semibold text-blue-900">
+          <p className="text-base sm:text-lg font-semibold text-blue-900">
             {selectedCardData?.name || "Please select a life assured first"}
           </p>
         </div>
       </div>
 
       {/* Claim Details Section */}
-      <div className="mb-8">
-        <div className="border-t-2 border-gray-200 pt-6">
-          <h2 className="text-xl font-bold text-gray-800 mb-3">
+      <div className="mb-6 sm:mb-8">
+        <div className="border-t-2 border-gray-200 pt-4 sm:pt-6">
+          <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-2 sm:mb-3">
             Claim Details
           </h2>
-          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded-r-lg mb-6">
-            <p className="text-sm text-gray-700">
+          <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded-r-lg mb-4 sm:mb-6">
+            <p className="text-xs sm:text-sm text-gray-700">
               Complete all mandatory fields marked with{" "}
               <span className="text-red-500 font-semibold">*</span>
             </p>
           </div>
         </div>
         {/* 表单输入区域 */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 md:gap-6">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 md:gap-6">
           {/* 入院日期 */}
           <div className="space-y-1.5">
             <label className="block text-sm font-medium text-gray-700">
@@ -584,24 +584,24 @@ export default function QuestionnaireForm({
       </div>
 
       {/* 第三方理赔确认区域 */}
-      <div className="mt-8 pt-6 border-t border-gray-200">
+      <div className="mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200">
         <div
-          className={`border rounded-lg p-6 transition-all duration-200 ${
+          className={`border rounded-lg p-4 sm:p-6 transition-all duration-200 ${
             formState.thirdPartyClaim !== null
               ? "bg-green-50 border-green-200"
               : "bg-gray-50 border-gray-200"
           }`}
         >
-          <div className="flex flex-col md:flex-row md:items-center md:justify-between space-y-4 md:space-y-0">
+          <div className="flex flex-col space-y-3 sm:space-y-4 md:flex-row md:items-center md:justify-between md:space-y-0">
             <div className="flex-1">
               <div className="flex items-center space-x-2">
-                <h3 className="text-sm font-medium text-gray-800 mb-1">
+                <h3 className="text-xs sm:text-sm font-medium text-gray-800 mb-1">
                   Did you claim this medical expense from a third party?
                   <span className="text-red-500 ml-1">*</span>
                 </h3>
                 {formState.thirdPartyClaim !== null && (
                   <svg
-                    className="h-5 w-5 text-green-500"
+                    className="h-4 w-4 sm:h-5 sm:w-5 text-green-500"
                     fill="currentColor"
                     viewBox="0 0 20 20"
                   >
@@ -622,11 +622,11 @@ export default function QuestionnaireForm({
                 </p>
               )}
             </div>
-            <div className="flex space-x-0 border border-gray-300 rounded-md overflow-hidden">
+            <div className="flex space-x-0 border border-gray-300 rounded-md overflow-hidden w-full sm:w-auto">
               <button
                 type="button"
                 onClick={() => handleThirdPartyClaimChange("yes")}
-                className={`px-6 py-2 text-sm font-medium transition-all duration-200 ${
+                className={`flex-1 sm:flex-none px-4 sm:px-6 py-2 text-xs sm:text-sm font-medium transition-all duration-200 ${
                   formState.thirdPartyClaim === "yes"
                     ? "bg-blue-600 text-white border-blue-600"
                     : "bg-white text-gray-700 hover:bg-gray-50"
@@ -637,7 +637,7 @@ export default function QuestionnaireForm({
               <button
                 type="button"
                 onClick={() => handleThirdPartyClaimChange("no")}
-                className={`px-6 py-2 text-sm font-medium transition-all duration-200 border-l border-gray-300 ${
+                className={`flex-1 sm:flex-none px-4 sm:px-6 py-2 text-xs sm:text-sm font-medium transition-all duration-200 border-l border-gray-300 ${
                   formState.thirdPartyClaim === "no"
                     ? "bg-blue-600 text-white border-blue-600"
                     : "bg-white text-gray-700 hover:bg-gray-50"
@@ -650,12 +650,12 @@ export default function QuestionnaireForm({
         </div>
       </div>
       {/* 提示区域 */}
-      <div className="mt-8">
-        <div className="bg-amber-50 border border-amber-200 rounded-lg p-4">
-          <div className="flex items-start space-x-3">
-            <ExclamationCircleFilled className="text-amber-600 mt-0.5 flex-shrink-0" />
+      <div className="mt-6 sm:mt-8">
+        <div className="bg-amber-50 border border-amber-200 rounded-lg p-3 sm:p-4">
+          <div className="flex items-start space-x-2 sm:space-x-3">
+            <ExclamationCircleFilled className="text-amber-600 mt-0.5 flex-shrink-0 text-sm sm:text-base" />
             <div>
-              <p className="text-sm text-amber-800 font-medium mb-1">
+              <p className="text-xs sm:text-sm text-amber-800 font-medium mb-1">
                 Important Notice
               </p>
               <p className="text-xs text-amber-700 leading-relaxed">
@@ -669,12 +669,12 @@ export default function QuestionnaireForm({
       </div>
 
       {/* 添加账单区域 */}
-      <div className="mt-10 pt-8 border-t-2 border-gray-200">
-        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-8 space-y-6 border border-blue-100">
+      <div className="mt-8 sm:mt-10 pt-6 sm:pt-8 border-t-2 border-gray-200">
+        <div className="bg-gradient-to-br from-blue-50 to-indigo-50 rounded-2xl p-4 sm:p-6 lg:p-8 space-y-4 sm:space-y-6 border border-blue-100">
           <div className="text-center space-y-2">
-            <h2 className="text-2xl font-bold text-gray-800 flex items-center justify-center">
+            <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-gray-800 flex items-center justify-center">
               <svg
-                className="w-6 h-6 mr-3 text-blue-600"
+                className="w-5 h-5 sm:w-6 sm:h-6 mr-2 sm:mr-3 text-blue-600"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -688,11 +688,11 @@ export default function QuestionnaireForm({
               </svg>
               Add Bills
             </h2>
-            <p className="text-gray-600">
+            <p className="text-sm sm:text-base text-gray-600">
               Please provide details for all medical bills related to your claim
             </p>
-            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded-r-lg mt-4">
-              <p className="text-sm text-gray-700">
+            <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 rounded-r-lg mt-3 sm:mt-4">
+              <p className="text-xs sm:text-sm text-gray-700">
                 Complete all mandatory fields marked with{" "}
                 <span className="text-red-500 font-semibold">*</span>
               </p>
@@ -700,7 +700,7 @@ export default function QuestionnaireForm({
           </div>
 
           {/* 账单组件 */}
-          <div className="space-y-6">
+          <div className="space-y-4 sm:space-y-6">
             {billsArray.map((item, index) => (
               <BillComponent
                 key={item}
@@ -712,14 +712,14 @@ export default function QuestionnaireForm({
           </div>
 
           {/* 添加账单按钮 */}
-          <div className="mt-6">
+          <div className="mt-4 sm:mt-6">
             <button
               type="button"
               onClick={handleBillCurrent}
-              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-4 px-6 rounded-xl font-semibold transition-all duration-200 transform hover:scale-[1.02] shadow-lg hover:shadow-xl flex items-center justify-center space-x-3"
+              className="w-full bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white py-3 sm:py-4 px-4 sm:px-6 rounded-xl font-semibold transition-all duration-200 transform hover:scale-[1.02] shadow-lg hover:shadow-xl flex items-center justify-center space-x-2 sm:space-x-3"
             >
               <svg
-                className="w-5 h-5"
+                className="w-4 h-4 sm:w-5 sm:h-5"
                 fill="none"
                 stroke="currentColor"
                 viewBox="0 0 24 24"
@@ -731,19 +731,19 @@ export default function QuestionnaireForm({
                   d="M12 6v6m0 0v6m0-6h6m-6 0H6"
                 />
               </svg>
-              <span>Add Another Medical Bill</span>
+              <span className="text-sm sm:text-base">Add Another Medical Bill</span>
             </button>
           </div>
         </div>
 
         {/* 文档上传区域 */}
-        <div className="mt-10 pt-8 border-t-2 border-gray-200">
-          <div className="mb-6">
-            <h2 className="text-xl font-bold text-gray-800 mb-3">
+        <div className="mt-8 sm:mt-10 pt-6 sm:pt-8 border-t-2 border-gray-200">
+          <div className="mb-4 sm:mb-6">
+            <h2 className="text-lg sm:text-xl font-bold text-gray-800 mb-2 sm:mb-3">
               Upload Documents
             </h2>
-            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4">
-              <p className="text-sm text-blue-800 mb-2">
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-3 sm:p-4">
+              <p className="text-xs sm:text-sm text-blue-800 mb-2">
                 Please retain original copies of these documents for 6 months
                 from submission, as you may be required to submit them upon
                 request.
@@ -757,7 +757,7 @@ export default function QuestionnaireForm({
           </div>
 
           {/* 文档上传卡片 */}
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-4">
             {UploadCardsData.map((item, index) => (
               <UploadCard key={index} item={item} />
             ))}
