@@ -16,6 +16,7 @@ export default function PageLayout() {
   const [selectedUserIndex, setSelectedUserIndex] = useState<number | null>(
     null
   );
+  const [isBankInfoValid, setIsBankInfoValid] = useState(false);
 
   // 获取选中用户的数据
   const assuredCardData = [
@@ -159,6 +160,7 @@ export default function PageLayout() {
       bankInfoData={bankInfoData[`${selectedUserIndex}`] || {}}
       questionnaireData={questionnaireData[`${selectedUserIndex}`] || {}}
     />,
+
   ];
 
   // 验证函数：检查是否可以跳转到指定步骤
@@ -184,18 +186,22 @@ export default function PageLayout() {
         shouldDisable = selectedUserIndex === null;
         break;
       case 1:
+
         shouldDisable = !isQuestionnaireValid;
         break;
       case 2:
         shouldDisable = !isBankInfoValid;
         break;
+
       case 3:
         shouldDisable = true;
         break;
     }
 
     setBtnDisabled(shouldDisable);
+
   }, [selectedUserIndex, currentStep, isBankInfoValid, isQuestionnaireValid]);
+
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
@@ -234,6 +240,7 @@ export default function PageLayout() {
         </div>
       </header>
 
+
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col">
         {/* Step Progress */}
@@ -251,6 +258,7 @@ export default function PageLayout() {
               ]}
             />
           </div>
+
         </div>
 
         {/* Content */}

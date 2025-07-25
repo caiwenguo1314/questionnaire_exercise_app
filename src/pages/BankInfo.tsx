@@ -1,6 +1,7 @@
 import UploadCard from "components/ui/uploadCard";
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 
+
 // 更新组件接口，添加新的 props
 export default function BankInfo({
   setIsBankInfoValid,
@@ -16,6 +17,7 @@ export default function BankInfo({
     bankAccountNumberDetails?: string;
     branchNameDetails?: string;
     branchAddressDetails?: string;
+
   };
   updateBankInfoData: (field: string, value: any) => void;
 }) {
@@ -55,12 +57,14 @@ export default function BankInfo({
     fn: T,
     delay: number
   ) => {
+
     let timer: NodeJS.Timeout;
     return (...args: Parameters<T>) => {
       clearTimeout(timer);
       timer = setTimeout(() => {
         fn(...args);
       }, delay);
+
     };
   };
 
@@ -261,6 +265,7 @@ export default function BankInfo({
     setSelected(!selected);
   };
 
+
   // 监听表单验证状态
   useEffect(() => {
     const requiredFields = fieldConfigs.filter((field) => field.required);
@@ -395,6 +400,7 @@ export default function BankInfo({
         </h3>
         <div className="bg-gray-50 p-3 rounded-md">
           <UploadCard item={{ name: "First page savings book" }} />
+
         </div>
       </div>
 
