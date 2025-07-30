@@ -90,7 +90,7 @@ export default function QuestionnaireForm({
   questionnaireData, // 新增
   updateQuestionnaireData, // 新增
 }: {
-  setIsQuestionnaireValid?: (isValid: boolean) => void;
+  setIsQuestionnaireValid: (isValid: boolean) => void;
   selectedUserIndex: number | null;
   selectedCardData: AssuredPerson | null;
   questionnaireData: {

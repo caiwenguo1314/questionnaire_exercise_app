@@ -258,7 +258,7 @@ export default function PageLayout() {
       <div className="flex-1 flex flex-col">
         {/* Step Progress */}
         <div className="px-2 md:px-0">
-          <div className="p-3 md:p-6">
+          <div className="p-3 md:p-6 pb-12 md:pb-16">
             <StepProgress
               currentStep={currentStep}
               setCurrentStep={setCurrentStep}
@@ -275,7 +275,7 @@ export default function PageLayout() {
 
         {/* Content */}
         <main className="flex-1 pb-20 md:pb-24">
-          <div className="max-w-6xl mx-auto px-3 md:px-6 py-4 md:py-8 min-h-[calc(100vh-280px)] md:min-h-[calc(100vh-320px)] bg-white my-3 md:my-6 rounded-xl md:rounded-2xl shadow-lg border border-gray-100">
+          <div className="max-w-6xl mx-auto px-3 md:px-6 py-4 md:py-8 bg-white my-3 md:my-6 rounded-xl md:rounded-2xl shadow-lg border border-gray-100">
             <PageContent
               currentStep={currentStep}
               stepContents={stepContents}
