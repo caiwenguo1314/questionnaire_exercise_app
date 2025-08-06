@@ -102,24 +102,64 @@ export default function QuestionnaireForm({
   };
   updateQuestionnaireData: (field: string, value: any) => void;
 }) {
+  // 初始化字段验证状态的辅助函数
+  const initializeFieldState = useCallback((fieldName: string, value: string): InputFieldState => {
+    if (!value || value.trim() === '') {
+      return { value: '', isValid: null, isFilled: null };
+    }
+
+    const validation = fieldValidations[fieldName as keyof typeof fieldValidations];
+    if (!validation) {
+      return { value, isValid: true, isFilled: true };
+    }
+
+    let isValid = true;
+    let errorMessage = validation.errorMessage;
+
+    if (validation.required && value.trim().length === 0) {
+      isValid = false;
+    } else if (fieldName === "hospitalName" && value.trim().length < 2) {
+      isValid = false;
+    } else if (
+      (fieldName === "admissionDate" || fieldName === "dischargeDate") &&
+      value.trim().length === 0
+    ) {
+      isValid = false;
+    }
+
+    return {
+      value,
+      isValid,
+      isFilled: true,
+      errorMessage: isValid ? undefined : errorMessage,
+    };
+  }, []);
+
   // 表单状态管理
-  const [formState, setFormState] = useState<FormState>({
-    admissionDate: { 
-      value: questionnaireData.admissionDate || "", 
-      isValid: null, 
-      isFilled: questionnaireData.admissionDate ? true : null 
-    },
-    dischargeDate: { 
-      value: questionnaireData.dischargeDate || "", 
-      isValid: null, 
-      isFilled: questionnaireData.dischargeDate ? true : null 
-    },
-    hospitalName: { 
-      value: questionnaireData.hospitalName || "", 
-      isValid: null, 
-      isFilled: questionnaireData.hospitalName ? true : null 
-    },
-    thirdPartyClaim: questionnaireData.thirdPartyClaim || null,
+  const [formState, setFormState] = useState<FormState>(() => {
+    const admissionState = initializeFieldState('admissionDate', questionnaireData.admissionDate || '');
+    const dischargeState = initializeFieldState('dischargeDate', questionnaireData.dischargeDate || '');
+    const hospitalState = initializeFieldState('hospitalName', questionnaireData.hospitalName || '');
+
+    // 日期交叉验证
+    if (admissionState.value && dischargeState.value) {
+      const admissionDate = new Date(admissionState.value);
+      const dischargeDate = new Date(dischargeState.value);
+
+      if (admissionDate >= dischargeDate) {
+        admissionState.isValid = false;
+        admissionState.errorMessage = "入院日期必须早于出院日期";
+        dischargeState.isValid = false;
+        dischargeState.errorMessage = "出院日期必须晚于入院日期";
+      }
+    }
+
+    return {
+      admissionDate: admissionState,
+      dischargeDate: dischargeState,
+      hospitalName: hospitalState,
+      thirdPartyClaim: questionnaireData.thirdPartyClaim || null,
+    };
   });
 
   // 初始化账单数组
@@ -316,7 +356,7 @@ export default function QuestionnaireForm({
     });
   };
 
-  // 监听表单验证状态 - 保持不变
+  // 监听表单验证状态
   useEffect(() => {
     const isFormValid = Boolean(
       formState.admissionDate.isValid === true &&
@@ -324,6 +364,30 @@ export default function QuestionnaireForm({
         formState.hospitalName.isValid === true &&
         formState.thirdPartyClaim !== null
     );
+
+    // 添加调试日志
+    console.log('QuestionnaireForm validation:', {
+      admissionDate: {
+        value: formState.admissionDate.value,
+        isValid: formState.admissionDate.isValid,
+        isFilled: formState.admissionDate.isFilled,
+        errorMessage: formState.admissionDate.errorMessage
+      },
+      dischargeDate: {
+        value: formState.dischargeDate.value,
+        isValid: formState.dischargeDate.isValid,
+        isFilled: formState.dischargeDate.isFilled,
+        errorMessage: formState.dischargeDate.errorMessage
+      },
+      hospitalName: {
+        value: formState.hospitalName.value,
+        isValid: formState.hospitalName.isValid,
+        isFilled: formState.hospitalName.isFilled,
+        errorMessage: formState.hospitalName.errorMessage
+      },
+      thirdPartyClaim: formState.thirdPartyClaim,
+      isFormValid
+    });
 
     if (setIsQuestionnaireValid) {
       setIsQuestionnaireValid(isFormValid);

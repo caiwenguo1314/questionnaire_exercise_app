@@ -8,14 +8,16 @@ import { useEffect, useState } from "react";
 import PageContent from "./pageContent";
 
 export default function PageLayout() {
-  /* 使用自定义钩子 */
+  /* 当前步骤 */
+
   const [currentStep, setCurrentStep] = useState(0);
-
+  /* 下一步按钮是否禁用 */
   const [btnDisabled, setBtnDisabled] = useState(true);
-
+  /* 选中的用户索引 */
   const [selectedUserIndex, setSelectedUserIndex] = useState<number | null>(
     null
   );
+  /* 银行信息是否有效 */
   const [isBankInfoValid, setIsBankInfoValid] = useState(false);
 
   // 获取选中用户的数据
@@ -60,7 +62,7 @@ export default function PageLayout() {
       ],
     },
   ];
-
+  /* 选中的用户数据 */
   const selectedCardData =
     selectedUserIndex !== null ? assuredCardData[selectedUserIndex] : null;
 
@@ -86,7 +88,7 @@ export default function PageLayout() {
     };
   }>({});
 
-  // 当用户选择变化时，不需要清除 sessionStorage，只需要确保使用正确的用户索引
+  /* 问卷表单是否有效 */
   const handleUserSelectionChange = (index: number) => {
     if (selectedUserIndex !== index) {
       // 重置验证状态
@@ -102,17 +104,17 @@ export default function PageLayout() {
   // 更新问卷数据的函数
   const updateQuestionnaireData = (field: string, value: any) => {
     if (selectedUserIndex === null) return;
-    
-    setQuestionnaireData(prev => {
+
+    setQuestionnaireData((prev) => {
       const userKey = `${selectedUserIndex}`;
       const userData = prev[userKey] || {};
-      
+
       return {
         ...prev,
         [userKey]: {
           ...userData,
-          [field]: value
-        }
+          [field]: value,
+        },
       };
     });
   };
@@ -120,17 +122,17 @@ export default function PageLayout() {
   // 更新银行信息的函数
   const updateBankInfoData = (field: string, value: any) => {
     if (selectedUserIndex === null) return;
-    
-    setBankInfoData(prev => {
+
+    setBankInfoData((prev) => {
       const userKey = `${selectedUserIndex}`;
       const userData = prev[userKey] || {};
-      
+
       return {
         ...prev,
         [userKey]: {
           ...userData,
-          [field]: value
-        }
+          [field]: value,
+        },
       };
     });
   };
@@ -159,7 +161,6 @@ export default function PageLayout() {
       bankInfoData={bankInfoData[`${selectedUserIndex}`] || {}}
       questionnaireData={questionnaireData[`${selectedUserIndex}`] || {}}
     />,
-
   ];
 
   // 验证函数：检查是否可以跳转到指定步骤
@@ -172,7 +173,9 @@ export default function PageLayout() {
       case 2:
         return selectedUserIndex !== null && isQuestionnaireValid; // 需要完成问卷
       case 3:
-        return selectedUserIndex !== null && isQuestionnaireValid && isBankInfoValid; // 需要完成所有前置步骤
+        return (
+          selectedUserIndex !== null && isQuestionnaireValid && isBankInfoValid
+        ); // 需要完成所有前置步骤
       default:
         return false;
     }
@@ -185,7 +188,6 @@ export default function PageLayout() {
         shouldDisable = selectedUserIndex === null;
         break;
       case 1:
-
         shouldDisable = !isQuestionnaireValid;
         break;
       case 2:
@@ -198,9 +200,7 @@ export default function PageLayout() {
     }
 
     setBtnDisabled(shouldDisable);
-
   }, [selectedUserIndex, currentStep, isBankInfoValid, isQuestionnaireValid]);
-
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-blue-50 via-white to-indigo-50">
@@ -231,7 +231,7 @@ export default function PageLayout() {
               </div>
             </div>
           </div>
-          
+
           {/* Right side controls */}
           <div className="flex items-center gap-2 md:gap-4">
             {/* Search - Hidden on small screens, smaller on medium */}
@@ -242,17 +242,26 @@ export default function PageLayout() {
               className="hidden sm:block w-32 md:w-48 px-3 md:px-4 py-2 border border-gray-300 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent shadow-sm"
             />
             <SettingOutlined className="text-lg md:text-xl text-gray-600 cursor-pointer hover:text-blue-600 transition-all duration-200 hover:scale-110" />
-            
+
             {/* Mobile Menu Button - Only visible on mobile */}
             <button className="lg:hidden p-2 text-gray-600 hover:text-blue-600 transition-colors">
-              <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M4 6h16M4 12h16M4 18h16" />
+              <svg
+                className="w-6 h-6"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M4 6h16M4 12h16M4 18h16"
+                />
               </svg>
             </button>
           </div>
         </div>
       </header>
-
 
       {/* Main Content Area */}
       <div className="flex-1 flex flex-col">
@@ -274,7 +283,7 @@ export default function PageLayout() {
         </div>
 
         {/* Content */}
-        <main className="flex-1 pb-20 md:pb-24">
+        <main className="flex-1 pb-24 md:pb-24">
           <div className="max-w-6xl mx-auto px-3 md:px-6 py-4 md:py-8 bg-white my-3 md:my-6 rounded-xl md:rounded-2xl shadow-lg border border-gray-100">
             <PageContent
               currentStep={currentStep}
@@ -283,65 +292,134 @@ export default function PageLayout() {
           </div>
         </main>
       </div>
-      
+
       {/* Fixed Action Buttons */}
-      <div className="fixed bottom-4 md:bottom-8 left-4 right-4 md:left-auto md:right-8 md:w-auto flex gap-3 md:gap-4 z-10">
-        <button
-          onClick={() => {
-            if (currentStep > 0) {
-              setCurrentStep(currentStep - 1);
-            }
-          }}
-          disabled={currentStep === 0}
-          className={`flex-1 md:flex-none px-4 md:px-6 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg ${
-            currentStep === 0
-              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-              : "bg-white text-gray-700 hover:bg-gray-50 hover:shadow-xl border border-gray-200 hover:border-gray-300"
-          }`}
-        >
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+      <div className="fixed bottom-0 md:bottom-8 left-0 right-0 md:left-auto md:right-8 md:w-auto z-10">
+        {/* Mobile background overlay */}
+        <div className="md:hidden bg-gradient-to-t from-white via-white/95 to-transparent pt-6 pb-4 px-4">
+          <div className="flex gap-3">
+            <button
+              onClick={() => {
+                if (currentStep > 0) {
+                  setCurrentStep(currentStep - 1);
+                }
+              }}
+              disabled={currentStep === 0}
+              className={`flex-1 px-4 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg ${
+                currentStep === 0
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  : "bg-white text-gray-700 hover:bg-gray-50 hover:shadow-xl border border-gray-200 hover:border-gray-300"
+              }`}
+            >
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M15 19l-7-7 7-7"
+                />
+              </svg>
+              <span>Back</span>
+            </button>
+            <button
+              onClick={() => {
+                if (currentStep < stepContents.length - 1) {
+                  setCurrentStep(currentStep + 1);
+                }
+              }}
+              disabled={btnDisabled}
+              className={`flex-1 px-6 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg transform hover:scale-105 ${
+                btnDisabled
+                  ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                  : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white hover:shadow-xl"
+              }`}
+            >
+              <span className="text-sm">
+                {currentStep === 3 ? "Submit Application" : "Continue"}
+              </span>
+              <svg
+                className="w-4 h-4"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  strokeWidth={2}
+                  d="M9 5l7 7-7 7"
+                />
+              </svg>
+            </button>
+          </div>
+        </div>
+        
+        {/* Desktop buttons */}
+        <div className="hidden md:flex gap-4">
+          <button
+            onClick={() => {
+              if (currentStep > 0) {
+                setCurrentStep(currentStep - 1);
+              }
+            }}
+            disabled={currentStep === 0}
+            className={`px-6 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg ${
+              currentStep === 0
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-white text-gray-700 hover:bg-gray-50 hover:shadow-xl border border-gray-200 hover:border-gray-300"
+            }`}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M15 19l-7-7 7-7"
-            />
-          </svg>
-          <span className="hidden sm:inline">Back</span>
-        </button>
-        <button
-          onClick={() => {
-            if (currentStep < stepContents.length - 1) {
-              setCurrentStep(currentStep + 1);
-            }
-          }}
-          disabled={btnDisabled}
-          className={`flex-1 md:flex-none px-6 md:px-8 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg transform hover:scale-105 ${
-            btnDisabled
-              ? "bg-gray-100 text-gray-400 cursor-not-allowed"
-              : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white hover:shadow-xl"
-          }`}
-        >
-          <span className="text-sm md:text-base">{currentStep === 3 ? "Submit Application" : "Continue"}</span>
-          <svg
-            className="w-4 h-4"
-            fill="none"
-            stroke="currentColor"
-            viewBox="0 0 24 24"
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M15 19l-7-7 7-7"
+              />
+            </svg>
+            <span>Back</span>
+          </button>
+          <button
+            onClick={() => {
+              if (currentStep < stepContents.length - 1) {
+                setCurrentStep(currentStep + 1);
+              }
+            }}
+            disabled={btnDisabled}
+            className={`px-8 py-3 rounded-xl font-semibold transition-all duration-200 flex items-center justify-center space-x-2 shadow-lg transform hover:scale-105 ${
+              btnDisabled
+                ? "bg-gray-100 text-gray-400 cursor-not-allowed"
+                : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white hover:shadow-xl"
+            }`}
           >
-            <path
-              strokeLinecap="round"
-              strokeLinejoin="round"
-              strokeWidth={2}
-              d="M9 5l7 7-7 7"
-            />
-          </svg>
-        </button>
+            <span>
+              {currentStep === 3 ? "Submit Application" : "Continue"}
+            </span>
+            <svg
+              className="w-4 h-4"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path
+                strokeLinecap="round"
+                strokeLinejoin="round"
+                strokeWidth={2}
+                d="M9 5l7 7-7 7"
+              />
+            </svg>
+          </button>
+        </div>
       </div>
     </div>
   );

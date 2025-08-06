@@ -52,6 +52,30 @@ export default function BankInfo({
 
   const [selected, setSelected] = useState(false);
 
+  // 保存条款同意状态到 sessionStorage
+  useEffect(() => {
+    if (selectedUserIndex !== null) {
+      const storageKey = `${selectedUserIndex}_termsAgreed`;
+      sessionStorage.setItem(storageKey, JSON.stringify(selected));
+    }
+  }, [selected, selectedUserIndex]);
+
+  // 从 sessionStorage 恢复条款同意状态
+  useEffect(() => {
+    if (selectedUserIndex !== null) {
+      const storageKey = `${selectedUserIndex}_termsAgreed`;
+      const savedValue = sessionStorage.getItem(storageKey);
+      if (savedValue !== null) {
+        try {
+          const value = JSON.parse(savedValue);
+          setSelected(value);
+        } catch (error) {
+          console.error('Error parsing saved terms agreement:', error);
+        }
+      }
+    }
+  }, [selectedUserIndex]);
+
   //定义函数
   const debounceFunction = <T extends (...args: any[]) => void>(
     fn: T,
@@ -155,34 +179,84 @@ export default function BankInfo({
     ],
     []
   );
+
+  // 创建初始化函数
+  const initializeField = useCallback((fieldKey: keyof BankInfoStates, value: string | undefined) => {
+    const fieldConfig = fieldConfigs.find(field => field.key === fieldKey);
+    if (!value || !fieldConfig) {
+      return {
+        inputValue: value || "",
+        inputValidation: null,
+        inputFilled: value ? true : null,
+      };
+    }
+    
+    // 如果有值，立即验证
+    const isValid = value.length >= fieldConfig.validation.minLength &&
+                   value.length <= fieldConfig.validation.maxLength &&
+                   fieldConfig.validation.regex.test(value);
+    
+    return {
+      inputValue: value,
+      inputValidation: isValid,
+      inputFilled: true,
+    };
+  }, [fieldConfigs]);
+
   // 初始化银行信息状态，使用 props 中的数据
-  const [bankInfoDetails, setBankInfoDetails] = useState<BankInfoStates>({
-    accountHolderNameDetails: {
-      inputValue: bankInfoData.accountHolderNameDetails || "",
-      inputValidation: null,
-      inputFilled: bankInfoData.accountHolderNameDetails ? true : null,
-    },
-    bankNameDetails: {
-      inputValue: bankInfoData.bankNameDetails || "",
-      inputValidation: null,
-      inputFilled: bankInfoData.bankNameDetails ? true : null,
-    },
-    bankAccountNumberDetails: {
-      inputValue: bankInfoData.bankAccountNumberDetails || "",
-      inputValidation: null,
-      inputFilled: bankInfoData.bankAccountNumberDetails ? true : null,
-    },
-    branchNameDetails: {
-      inputValue: bankInfoData.branchNameDetails || "",
-      inputValidation: null,
-      inputFilled: bankInfoData.branchNameDetails ? true : null,
-    },
-    branchAddressDetails: {
-      inputValue: bankInfoData.branchAddressDetails || "",
-      inputValidation: null,
-      inputFilled: bankInfoData.branchAddressDetails ? true : null,
-    },
+  const [bankInfoDetails, setBankInfoDetails] = useState<BankInfoStates>(() => {
+    return {
+      accountHolderNameDetails: {
+        inputValue: bankInfoData.accountHolderNameDetails || "",
+        inputValidation: null,
+        inputFilled: bankInfoData.accountHolderNameDetails ? true : null,
+      },
+      bankNameDetails: {
+        inputValue: bankInfoData.bankNameDetails || "",
+        inputValidation: null,
+        inputFilled: bankInfoData.bankNameDetails ? true : null,
+      },
+      bankAccountNumberDetails: {
+        inputValue: bankInfoData.bankAccountNumberDetails || "",
+        inputValidation: null,
+        inputFilled: bankInfoData.bankAccountNumberDetails ? true : null,
+      },
+      branchNameDetails: {
+        inputValue: bankInfoData.branchNameDetails || "",
+        inputValidation: null,
+        inputFilled: bankInfoData.branchNameDetails ? true : null,
+      },
+      branchAddressDetails: {
+        inputValue: bankInfoData.branchAddressDetails || "",
+        inputValidation: null,
+        inputFilled: bankInfoData.branchAddressDetails ? true : null,
+      },
+    };
   });
+
+  // 初始化验证状态
+  useEffect(() => {
+    if (bankInfoData && Object.keys(bankInfoData).length > 0) {
+      const newState = { ...bankInfoDetails };
+      let hasChanges = false;
+
+      Object.keys(bankInfoData).forEach((key) => {
+        const fieldKey = key as keyof BankInfoStates;
+        const value = bankInfoData[fieldKey];
+        if (value && newState[fieldKey]) {
+          const initializedField = initializeField(fieldKey, value);
+          if (initializedField.inputValidation !== newState[fieldKey].inputValidation) {
+            newState[fieldKey] = initializedField;
+            hasChanges = true;
+          }
+        }
+      });
+
+      if (hasChanges) {
+        setBankInfoDetails(newState);
+      }
+    }
+  }, [bankInfoData, initializeField]);
 
   // 修改验证函数，使用 updateBankInfoData 而不是 sessionStorage
   const validateInputEvent = useCallback(
@@ -270,13 +344,46 @@ export default function BankInfo({
   useEffect(() => {
     const requiredFields = fieldConfigs.filter((field) => field.required);
     const allRequiredFieldsValid = requiredFields.every(
-      (field) => bankInfoDetails[field.key].inputValidation === true
+      (field) => {
+        const fieldState = bankInfoDetails[field.key];
+        return fieldState.inputValidation === true && fieldState.inputFilled === true;
+      }
     );
-    const allFieldsValid = Object.values(bankInfoDetails).every(
-      (field) => field.inputValidation === true
+    
+    // 检查非必填字段：如果有值则必须有效，如果没有值则忽略
+    const optionalFields = fieldConfigs.filter((field) => !field.required);
+    const allOptionalFieldsValid = optionalFields.every(
+      (field) => {
+        const fieldState = bankInfoDetails[field.key];
+        // 如果字段为空或未填写，则认为有效
+        if (!fieldState.inputFilled || !fieldState.inputValue || fieldState.inputValue.trim() === '') {
+          return true;
+        }
+        // 如果有值，则必须验证通过
+        return fieldState.inputValidation === true;
+      }
     );
 
-    setIsBankInfoValid(allRequiredFieldsValid && allFieldsValid && selected);
+    const isFormValid = allRequiredFieldsValid && allOptionalFieldsValid && selected;
+    
+    // 添加调试日志
+    console.log('Form validation:', {
+      allRequiredFieldsValid,
+      allOptionalFieldsValid,
+      selected,
+      isFormValid,
+      bankInfoDetails: Object.keys(bankInfoDetails).reduce((acc, key) => {
+        const field = bankInfoDetails[key as keyof BankInfoStates];
+        acc[key] = {
+          value: field.inputValue,
+          validation: field.inputValidation,
+          filled: field.inputFilled
+        };
+        return acc;
+      }, {} as any)
+    });
+
+    setIsBankInfoValid(isFormValid);
   }, [bankInfoDetails, selected, setIsBankInfoValid, fieldConfigs]);
 
   // 从sessionStorage恢复数据
