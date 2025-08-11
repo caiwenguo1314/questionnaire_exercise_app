@@ -1,15 +1,15 @@
 {
   "files": {
-    "main.css": "/questionnaire_exercise_app/static/css/main.5cd3f6c1.css",
-    "main.js": "/questionnaire_exercise_app/static/js/main.5b791296.js",
+    "main.css": "/questionnaire_exercise_app/static/css/main.4390b9ae.css",
+    "main.js": "/questionnaire_exercise_app/static/js/main.e68c53c7.js",
     "static/js/453.b3e89716.chunk.js": "/questionnaire_exercise_app/static/js/453.b3e89716.chunk.js",
     "index.html": "/questionnaire_exercise_app/index.html",
-    "main.5cd3f6c1.css.map": "/questionnaire_exercise_app/static/css/main.5cd3f6c1.css.map",
-    "main.5b791296.js.map": "/questionnaire_exercise_app/static/js/main.5b791296.js.map",
+    "main.4390b9ae.css.map": "/questionnaire_exercise_app/static/css/main.4390b9ae.css.map",
+    "main.e68c53c7.js.map": "/questionnaire_exercise_app/static/js/main.e68c53c7.js.map",
     "453.b3e89716.chunk.js.map": "/questionnaire_exercise_app/static/js/453.b3e89716.chunk.js.map"
   },
   "entrypoints": [
-    "static/css/main.5cd3f6c1.css",
-    "static/js/main.5b791296.js"
+    "static/css/main.4390b9ae.css",
+    "static/js/main.e68c53c7.js"
   ]
 }
