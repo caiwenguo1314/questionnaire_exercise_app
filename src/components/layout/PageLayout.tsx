@@ -4,7 +4,7 @@ import BankInfo from "pages/BankInfo";
 import PolicySelect from "pages/PolicySelect";
 import QuestionnaireForm from "pages/QuestionnaireForm";
 import Review from "pages/Review";
-import { useEffect, useState } from "react";
+import { useEffect, useState, useMemo, useCallback } from "react";
 import PageContent from "./pageContent";
 
 export default function PageLayout() {
@@ -137,7 +137,7 @@ export default function PageLayout() {
     });
   };
 
-  const stepContents = [
+  const stepContents = useMemo(() => [
     <PolicySelect
       selectedUserIndex={selectedUserIndex}
       setSelectedUserIndex={handleUserSelectionChange}
@@ -161,10 +161,10 @@ export default function PageLayout() {
       bankInfoData={bankInfoData[`${selectedUserIndex}`] || {}}
       questionnaireData={questionnaireData[`${selectedUserIndex}`] || {}}
     />,
-  ];
+  ], [selectedUserIndex, selectedCardData, questionnaireData, bankInfoData, handleUserSelectionChange, updateQuestionnaireData, updateBankInfoData]);
 
   // 验证函数：检查是否可以跳转到指定步骤
-  const canNavigateToStep = (stepId: number): boolean => {
+  const canNavigateToStep = useCallback((stepId: number): boolean => {
     switch (stepId) {
       case 0:
         return true; // 第一步总是可以访问
@@ -179,7 +179,7 @@ export default function PageLayout() {
       default:
         return false;
     }
-  };
+  }, [selectedUserIndex, isQuestionnaireValid, isBankInfoValid]);
 
   useEffect(() => {
     let shouldDisable = true;
@@ -284,7 +284,7 @@ export default function PageLayout() {
 
         {/* Content */}
         <main className="flex-1 pb-24 md:pb-24">
-          <div className="max-w-6xl mx-auto px-3 md:px-6 py-4 md:py-8 bg-white my-3 md:my-6 rounded-xl md:rounded-2xl shadow-lg border border-gray-100">
+          <div className="max-w-6xl mx-auto px-3 md:px-6 py-4 md:py-8 bg-white my-3 md:my-6 rounded-xl md:rounded-2xl shadow-lg border border-gray-100 min-h-[500px]">
             <PageContent
               currentStep={currentStep}
               stepContents={stepContents}

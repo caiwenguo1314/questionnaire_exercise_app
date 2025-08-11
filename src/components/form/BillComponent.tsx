@@ -1,30 +1,32 @@
 
 
-import React from "react";
+import React, { memo } from "react";
 
 interface BillComponentProps {
-  billIndex: number;
-  onDelete?: (index: number) => void;
-  canDelete?: boolean;
+  billNumber: number;
+  onDelete?: (billToDelete: number) => void;
+  isLastBill?: boolean;
+  onAddBill?: () => void;
 }
 
-export default function BillComponent({
-  billIndex,
+const BillComponent = memo(function BillComponent({
+  billNumber,
   onDelete,
-  canDelete = true,
+  isLastBill = false,
+  onAddBill,
 }: BillComponentProps) {
   return (
     <div className="border border-gray-200 rounded-xl p-6 space-y-6 bg-white shadow-md hover:shadow-lg transition-shadow duration-200 mt-10 w-full">
         <div className="flex justify-between items-center mb-4">
           <h3 className="text-xl font-bold text-gray-800 flex items-center">
             <span className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm font-medium mr-3">
-              #{billIndex + 1}
+              #{billNumber}
             </span>
             Medical Bill
           </h3>
-          {canDelete && onDelete && (
+          {!isLastBill && onDelete && (
             <button
-              onClick={() => onDelete(billIndex)}
+              onClick={() => onDelete && onDelete(billNumber)}
               className="bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 px-4 py-2 rounded-lg font-medium text-sm transition-colors duration-200 flex items-center space-x-2 border border-red-200 hover:border-red-300"
               type="button"
             >
@@ -70,5 +72,7 @@ export default function BillComponent({
           </div>
         </div>
       </div>
-  )
-}
+  );
+});
+
+export default BillComponent;

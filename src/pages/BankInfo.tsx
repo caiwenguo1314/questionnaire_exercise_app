@@ -1,5 +1,119 @@
 import UploadCard from "components/ui/uploadCard";
-import React, { useCallback, useEffect, useMemo, useState } from "react";
+import React, { useCallback, useEffect, useMemo, useState, memo } from "react";
+
+//定义输入验证接口
+interface ValidationConfig {
+  minLength: number;
+  maxLength: number;
+  regex: RegExp;
+  errorMessage: string;
+}
+
+//定义输入状态接口
+interface inputValueState {
+  inputValue: string;
+  inputValidation: boolean | null;
+  inputFilled: boolean | null;
+}
+
+//定义表单状态接口
+interface BankInfoStates {
+  accountHolderNameDetails: inputValueState;
+  bankNameDetails: inputValueState;
+  bankAccountNumberDetails: inputValueState;
+  branchNameDetails: inputValueState;
+  branchAddressDetails: inputValueState;
+}
+
+//定义输入字段配置接口
+interface FieldConfig {
+  key: keyof BankInfoStates;
+  label: string;
+  placeholder: string;
+  required: boolean;
+  validation: ValidationConfig;
+}
+
+// 创建一个可重用的输入字段组件
+const InputField = memo(({ 
+  field, 
+  value, 
+  isValid, 
+  isFilled, 
+  onChange, 
+  getInputStyle 
+}: { 
+  field: FieldConfig; 
+  value: string; 
+  isValid: boolean | null; 
+  isFilled: boolean | null; 
+  onChange: (e: React.ChangeEvent<HTMLInputElement>) => void; 
+  getInputStyle: (isValid: boolean | null, isFilled: boolean | null) => string; 
+}) => {
+  return (
+    <div className="space-y-1.5">
+      <label className="block text-sm font-medium text-gray-700">
+        {field.label}
+        {field.required && <span className="text-red-500 ml-1">*</span>}
+      </label>
+      <div className="relative">
+        <input
+          type="text"
+          name={String(field.key)}
+          placeholder={field.placeholder}
+          value={value}
+          onChange={onChange}
+          className={getInputStyle(isValid, isFilled)}
+        />
+        {isFilled && (
+          <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+            {isValid ? (
+              <svg
+                className="h-5 w-5 text-green-500"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            ) : (
+              <svg
+                className="h-5 w-5 text-red-500"
+                fill="currentColor"
+                viewBox="0 0 20 20"
+              >
+                <path
+                  fillRule="evenodd"
+                  d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
+                  clipRule="evenodd"
+                />
+              </svg>
+            )}
+          </div>
+        )}
+      </div>
+      {!isValid && isFilled && (
+        <div className="flex items-start space-x-2">
+          <svg
+            className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fillRule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+              clipRule="evenodd"
+            />
+          </svg>
+          <p className="text-sm text-red-600">{field.validation.errorMessage}</p>
+        </div>
+      )}
+    </div>
+  );
+});
 
 
 // 更新组件接口，添加新的 props
@@ -81,14 +195,27 @@ export default function BankInfo({
     fn: T,
     delay: number
   ) => {
-
     let timer: NodeJS.Timeout;
+    let lastArgs: Parameters<T>;
+    let lastCallTime: number;
+
     return (...args: Parameters<T>) => {
+      lastArgs = args;
+      const now = Date.now();
+
+      // 如果是第一次调用或者距离上次调用超过了延迟时间，立即执行
+      if (!lastCallTime || (now - lastCallTime) >= delay) {
+        lastCallTime = now;
+        fn(...args);
+        return;
+      }
+
+      // 否则使用防抖
       clearTimeout(timer);
       timer = setTimeout(() => {
-        fn(...args);
-      }, delay);
-
+        lastCallTime = Date.now();
+        fn(...lastArgs);
+      }, Math.max(delay - (now - lastCallTime), 16));
     };
   };
 
@@ -327,13 +454,26 @@ export default function BankInfo({
     [fieldConfigs, updateBankInfoData]
   );
 
-  const handleBankInfoOnChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const { name, value } = e.target;
-    debounceFunction(validateInputEvent, 150)(
-      value,
-      name as keyof BankInfoStates
-    );
-  };
+  const debouncedValidateInput = useMemo(
+    () => debounceFunction(validateInputEvent, 50),
+    [validateInputEvent]
+  );
+
+  const handleBankInfoOnChange = useCallback(
+    (e: React.ChangeEvent<HTMLInputElement>) => {
+      const { name, value } = e.target;
+      // 立即更新输入值，但延迟验证
+      setBankInfoDetails((prev) => ({
+        ...prev,
+        [name]: {
+          ...prev[name as keyof BankInfoStates],
+          inputValue: value,
+        },
+      }));
+      debouncedValidateInput(value, name as keyof BankInfoStates);
+    },
+    [debouncedValidateInput]
+  );
 
   const onClick = () => {
     setSelected(!selected);
@@ -427,76 +567,15 @@ export default function BankInfo({
       {/* 表单区域 */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-3 sm:gap-4 md:gap-6 mb-4 sm:mb-6">
         {fieldConfigs.map((field) => (
-          <div key={field.key} className="space-y-1.5">
-            <label className="block text-sm font-medium text-gray-700">
-              {field.label}
-              {field.required && <span className="text-red-500 ml-1">*</span>}
-            </label>
-            <div className="relative">
-              <input
-                type="text"
-                placeholder={field.placeholder}
-                title={field.label}
-                className={getInputStyle(
-                  bankInfoDetails[field.key].inputValidation,
-                  bankInfoDetails[field.key].inputFilled
-                )}
-                name={field.key}
-                value={bankInfoDetails[field.key].inputValue}
-                onChange={handleBankInfoOnChange}
-              />
-              {/* 验证状态图标 */}
-              {bankInfoDetails[field.key].inputFilled && (
-                <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                  {bankInfoDetails[field.key].inputValidation === true ? (
-                    <svg
-                      className="h-5 w-5 text-green-500"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  ) : (
-                    <svg
-                      className="h-5 w-5 text-red-500"
-                      fill="currentColor"
-                      viewBox="0 0 20 20"
-                    >
-                      <path
-                        fillRule="evenodd"
-                        d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z"
-                        clipRule="evenodd"
-                      />
-                    </svg>
-                  )}
-                </div>
-              )}
-            </div>
-            {/* 错误提示 */}
-            {!bankInfoDetails[field.key].inputValidation &&
-              bankInfoDetails[field.key].inputFilled && (
-                <div className="flex items-start space-x-2">
-                  <svg
-                    className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <p className="text-sm text-red-600">
-                    {field.validation.errorMessage}
-                  </p>
-                </div>
-              )}
-          </div>
+          <InputField
+            key={field.key}
+            field={field}
+            value={bankInfoDetails[field.key].inputValue}
+            isValid={bankInfoDetails[field.key].inputValidation}
+            isFilled={bankInfoDetails[field.key].inputFilled}
+            onChange={handleBankInfoOnChange}
+            getInputStyle={getInputStyle}
+          />
         ))}
       </div>
 

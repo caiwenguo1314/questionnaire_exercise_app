@@ -1,3 +1,5 @@
+import { memo } from 'react';
+
 const PageContent = ({
   currentStep,
   stepContents,
@@ -5,10 +7,17 @@ const PageContent = ({
   currentStep: number;
   stepContents: JSX.Element[];
 }) => {
-  // 注意 currentStep 是从 1 开始，数组是从 0 开始的
-  const content = stepContents[currentStep];
-
-  return <div className="mt-2">{content}</div>;
+  const currentContent = stepContents[currentStep];
+  
+  return (
+    <div className="mt-2">
+      {/* 使用 key 属性来帮助 React 识别内容变化 */}
+      <div key={currentStep}>
+        {currentContent}
+      </div>
+    </div>
+  );
 };
 
-export default PageContent;
+// 使用 React.memo 避免不必要的重渲染
+export default memo(PageContent);

@@ -1,7 +1,10 @@
 import { ExclamationCircleFilled } from "@ant-design/icons";
 import BillComponent from "components/form/BillComponent";
 import UploadCard from "components/ui/uploadCard";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useState, memo } from "react";
+
+// 使用 memo 优化 BillComponent 组件
+const MemoizedBillComponent = memo(BillComponent);
 
 // 字段验证配置
 const fieldValidations = {
@@ -356,13 +359,44 @@ export default function QuestionnaireForm({
     });
   };
 
-  // 监听表单验证状态
-  useEffect(() => {
-    const isFormValid = Boolean(
+  // 使用 useMemo 缓存错误提示组件
+  const ErrorMessage = useMemo(() => {
+    return ({ isValid, isFilled, errorMessage, defaultErrorMessage }: {
+      isValid: boolean | null;
+      isFilled: boolean | null;
+      errorMessage?: string;
+      defaultErrorMessage: string;
+    }) => {
+      if (isValid || !isFilled) return null;
+      
+      return (
+        <div className="flex items-start space-x-2">
+          <svg
+            className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0"
+            fill="currentColor"
+            viewBox="0 0 20 20"
+          >
+            <path
+              fillRule="evenodd"
+              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+              clipRule="evenodd"
+            />
+          </svg>
+          <p className="text-sm text-red-600">
+            {errorMessage || defaultErrorMessage}
+          </p>
+        </div>
+      );
+    };
+  }, []);
+
+  // 使用 useMemo 缓存表单验证状态
+  const isFormValid = useMemo(() => {
+    const valid = Boolean(
       formState.admissionDate.isValid === true &&
-        formState.dischargeDate.isValid === true &&
-        formState.hospitalName.isValid === true &&
-        formState.thirdPartyClaim !== null
+      formState.dischargeDate.isValid === true &&
+      formState.hospitalName.isValid === true &&
+      formState.thirdPartyClaim !== null
     );
 
     // 添加调试日志
@@ -386,13 +420,18 @@ export default function QuestionnaireForm({
         errorMessage: formState.hospitalName.errorMessage
       },
       thirdPartyClaim: formState.thirdPartyClaim,
-      isFormValid
+      isFormValid: valid
     });
 
+    return valid;
+  }, [formState]);
+
+  // 监听表单验证状态
+  useEffect(() => {
     if (setIsQuestionnaireValid) {
       setIsQuestionnaireValid(isFormValid);
     }
-  }, [formState, setIsQuestionnaireValid]);
+  }, [isFormValid, setIsQuestionnaireValid]);
 
   // 不再需要从 sessionStorage 恢复数据，因为数据已通过 props 传入
   // 移除原来的 useEffect
@@ -480,26 +519,12 @@ export default function QuestionnaireForm({
               )}
             </div>
             {/* 错误提示 */}
-            {!formState.admissionDate.isValid &&
-              formState.admissionDate.isFilled && (
-                <div className="flex items-start space-x-2">
-                  <svg
-                    className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <p className="text-sm text-red-600">
-                    {formState.admissionDate.errorMessage ||
-                      fieldValidations.admissionDate.errorMessage}
-                  </p>
-                </div>
-              )}
+            <ErrorMessage
+              isValid={formState.admissionDate.isValid}
+              isFilled={formState.admissionDate.isFilled}
+              errorMessage={formState.admissionDate.errorMessage}
+              defaultErrorMessage={fieldValidations.admissionDate.errorMessage}
+            />
           </div>
 
           {/* 出院日期 */}
@@ -551,26 +576,12 @@ export default function QuestionnaireForm({
               )}
             </div>
             {/* 错误提示 */}
-            {!formState.dischargeDate.isValid &&
-              formState.dischargeDate.isFilled && (
-                <div className="flex items-start space-x-2">
-                  <svg
-                    className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <p className="text-sm text-red-600">
-                    {formState.dischargeDate.errorMessage ||
-                      fieldValidations.dischargeDate.errorMessage}
-                  </p>
-                </div>
-              )}
+            <ErrorMessage
+              isValid={formState.dischargeDate.isValid}
+              isFilled={formState.dischargeDate.isFilled}
+              errorMessage={formState.dischargeDate.errorMessage}
+              defaultErrorMessage={fieldValidations.dischargeDate.errorMessage}
+            />
           </div>
 
           {/* 医院名称 */}
@@ -623,26 +634,12 @@ export default function QuestionnaireForm({
               )}
             </div>
             {/* 错误提示 */}
-            {!formState.hospitalName.isValid &&
-              formState.hospitalName.isFilled && (
-                <div className="flex items-start space-x-2">
-                  <svg
-                    className="h-4 w-4 text-red-500 mt-0.5 flex-shrink-0"
-                    fill="currentColor"
-                    viewBox="0 0 20 20"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                  <p className="text-sm text-red-600">
-                    {formState.hospitalName.errorMessage ||
-                      fieldValidations.hospitalName.errorMessage}
-                  </p>
-                </div>
-              )}
+            <ErrorMessage
+              isValid={formState.hospitalName.isValid}
+              isFilled={formState.hospitalName.isFilled}
+              errorMessage={formState.hospitalName.errorMessage}
+              defaultErrorMessage={fieldValidations.hospitalName.errorMessage}
+            />
           </div>
         </div>
       </div>
@@ -766,11 +763,12 @@ export default function QuestionnaireForm({
           {/* 账单组件 */}
           <div className="space-y-4 sm:space-y-6">
             {billsArray.map((item, index) => (
-              <BillComponent
+              <MemoizedBillComponent
                 key={item}
-                billIndex={index}
+                billNumber={item}
                 onDelete={handleDeleteBill}
-                canDelete={billsArray.length > 1}
+                isLastBill={item === billsArray[billsArray.length - 1]}
+                onAddBill={handleBillCurrent}
               />
             ))}
           </div>

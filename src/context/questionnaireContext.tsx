@@ -69,7 +69,7 @@ export function QuestionnaireContextProvider({
   /* 实现页面跳转 */
   useEffect(() => {
     if (stepCurrent >= 1 && stepCurrent <= RouterData.length) {
-      navigate(`/form/${RouterData[stepCurrent - 1]}`);
+      navigate(`/form/${RouterData[stepCurrent - 1]}`, { replace: true });
     }
   }, [stepCurrent, navigate]);
 
