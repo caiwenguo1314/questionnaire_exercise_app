@@ -5,7 +5,9 @@ import PolicySelect from "pages/PolicySelect";
 import QuestionnaireForm from "pages/QuestionnaireForm";
 import Review from "pages/Review";
 import { useEffect, useState, useMemo, useCallback } from "react";
+import * as Sentry from "@sentry/react";
 import PageContent from "./pageContent";
+import { Button } from "antd";
 
 export default function PageLayout() {
   /* 当前步骤 */
@@ -137,49 +139,65 @@ export default function PageLayout() {
     });
   };
 
-  const stepContents = useMemo(() => [
-    <PolicySelect
-      selectedUserIndex={selectedUserIndex}
-      setSelectedUserIndex={handleUserSelectionChange}
-    />,
-    <QuestionnaireForm
-      setIsQuestionnaireValid={setIsQuestionnaireValid}
-      selectedUserIndex={selectedUserIndex}
-      selectedCardData={selectedCardData}
-      questionnaireData={questionnaireData[`${selectedUserIndex}`] || {}}
-      updateQuestionnaireData={updateQuestionnaireData}
-    />,
-    <BankInfo
-      setIsBankInfoValid={setIsBankInfoValid}
-      selectedUserIndex={selectedUserIndex}
-      bankInfoData={bankInfoData[`${selectedUserIndex}`] || {}}
-      updateBankInfoData={updateBankInfoData}
-    />,
-    <Review
-      selectedCardData={selectedCardData}
-      selectedUserIndex={selectedUserIndex}
-      bankInfoData={bankInfoData[`${selectedUserIndex}`] || {}}
-      questionnaireData={questionnaireData[`${selectedUserIndex}`] || {}}
-    />,
-  ], [selectedUserIndex, selectedCardData, questionnaireData, bankInfoData, handleUserSelectionChange, updateQuestionnaireData, updateBankInfoData]);
+  const stepContents = useMemo(
+    () => [
+      <PolicySelect
+        selectedUserIndex={selectedUserIndex}
+        setSelectedUserIndex={handleUserSelectionChange}
+      />,
+      <QuestionnaireForm
+        setIsQuestionnaireValid={setIsQuestionnaireValid}
+        selectedUserIndex={selectedUserIndex}
+        selectedCardData={selectedCardData}
+        questionnaireData={questionnaireData[`${selectedUserIndex}`] || {}}
+        updateQuestionnaireData={updateQuestionnaireData}
+      />,
+      <BankInfo
+        setIsBankInfoValid={setIsBankInfoValid}
+        selectedUserIndex={selectedUserIndex}
+        bankInfoData={bankInfoData[`${selectedUserIndex}`] || {}}
+        updateBankInfoData={updateBankInfoData}
+      />,
+      <Review
+        selectedCardData={selectedCardData}
+        selectedUserIndex={selectedUserIndex}
+        bankInfoData={bankInfoData[`${selectedUserIndex}`] || {}}
+        questionnaireData={questionnaireData[`${selectedUserIndex}`] || {}}
+      />,
+    ],
+    [
+      selectedUserIndex,
+      selectedCardData,
+      questionnaireData,
+      bankInfoData,
+      handleUserSelectionChange,
+      updateQuestionnaireData,
+      updateBankInfoData,
+    ]
+  );
 
   // 验证函数：检查是否可以跳转到指定步骤
-  const canNavigateToStep = useCallback((stepId: number): boolean => {
-    switch (stepId) {
-      case 0:
-        return true; // 第一步总是可以访问
-      case 1:
-        return selectedUserIndex !== null; // 需要选择用户
-      case 2:
-        return selectedUserIndex !== null && isQuestionnaireValid; // 需要完成问卷
-      case 3:
-        return (
-          selectedUserIndex !== null && isQuestionnaireValid && isBankInfoValid
-        ); // 需要完成所有前置步骤
-      default:
-        return false;
-    }
-  }, [selectedUserIndex, isQuestionnaireValid, isBankInfoValid]);
+  const canNavigateToStep = useCallback(
+    (stepId: number): boolean => {
+      switch (stepId) {
+        case 0:
+          return true; // 第一步总是可以访问
+        case 1:
+          return selectedUserIndex !== null; // 需要选择用户
+        case 2:
+          return selectedUserIndex !== null && isQuestionnaireValid; // 需要完成问卷
+        case 3:
+          return (
+            selectedUserIndex !== null &&
+            isQuestionnaireValid &&
+            isBankInfoValid
+          ); // 需要完成所有前置步骤
+        default:
+          return false;
+      }
+    },
+    [selectedUserIndex, isQuestionnaireValid, isBankInfoValid]
+  );
 
   useEffect(() => {
     let shouldDisable = true;
@@ -210,8 +228,15 @@ export default function PageLayout() {
           {/* Logo and Navigation */}
           <div className="flex items-center gap-2 md:gap-8">
             <div className="cursor-pointer text-blue-600 font-bold text-lg md:text-xl">
-              PRUDENTIAL
+              ENTERPRISE
             </div>
+            <Button
+              onClick={() =>
+                Sentry.captureException(new Error("测试错误：Sentry"))
+              }
+            >
+              触发 Sentry 报错
+            </Button>
             {/* Desktop Navigation - Hidden on mobile */}
             <div className="hidden lg:flex gap-8 text-lg font-medium">
               <div className="cursor-pointer hover:text-blue-600 transition-all duration-200 hover:scale-105">
@@ -244,7 +269,7 @@ export default function PageLayout() {
             <SettingOutlined className="text-lg md:text-xl text-gray-600 cursor-pointer hover:text-blue-600 transition-all duration-200 hover:scale-110" />
 
             {/* Mobile Menu Button - Only visible on mobile */}
-            <button className="lg:hidden p-2 text-gray-600 hover:text-blue-600 transition-colors">
+            <Button className="lg:hidden p-2 text-gray-600 hover:text-blue-600 transition-colors">
               <svg
                 className="w-6 h-6"
                 fill="none"
@@ -258,7 +283,7 @@ export default function PageLayout() {
                   d="M4 6h16M4 12h16M4 18h16"
                 />
               </svg>
-            </button>
+            </Button>
           </div>
         </div>
       </header>
@@ -358,7 +383,7 @@ export default function PageLayout() {
             </button>
           </div>
         </div>
-        
+
         {/* Desktop buttons */}
         <div className="hidden md:flex gap-4">
           <button
@@ -402,9 +427,7 @@ export default function PageLayout() {
                 : "bg-gradient-to-r from-blue-600 to-blue-700 hover:from-blue-700 hover:to-blue-800 text-white hover:shadow-xl"
             }`}
           >
-            <span>
-              {currentStep === 3 ? "Submit Application" : "Continue"}
-            </span>
+            <span>{currentStep === 3 ? "Submit Application" : "Continue"}</span>
             <svg
               className="w-4 h-4"
               fill="none"
